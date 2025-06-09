@@ -59,22 +59,23 @@ namespace DPAT1
 
         private void ParseTriggerDefinition(string trimmedLine)
         {
-            throw new NotImplementedException();
+            //TODO: Implementation to parse the trigger definition and call builder.AddState()
         }
 
         private void ParseTransitionDefinition(string trimmedLine)
         {
-            throw new NotImplementedException();
+            //TODO: Implementation to parse the transition definition and call builder.AddTransition()
         }
 
         private void ParseActionDefinition(string trimmedLine)
         {
-            throw new NotImplementedException();
+            //TODO: Implementation to parse the action definition and call builder.AddAction()
         }
 
         private void ParseStateDefinition(string trimmedLine)
         {
-            throw new NotImplementedException();
+            //TODO: Implementation to parse the state definition and call builder.AddState()
         }
+
     }
 }

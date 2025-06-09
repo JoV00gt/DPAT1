@@ -1,10 +1,13 @@
 ﻿
+using DPAT1.Actions;
 using DPAT1.Interfaces;
+using DPAT1.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Action = DPAT1.Actions.Action;
 
 namespace DPAT1
 {
@@ -45,7 +48,7 @@ namespace DPAT1
 
         public void AddState(string id, string name, string type, string parent)
         {
-            State state = null;
+            IState state = null;
 
             switch(type.ToUpper())
             {
@@ -67,7 +70,7 @@ namespace DPAT1
 
             if (parent != null && parent != "_")
             {
-                State parentState = fsm.GetStateById(parent);
+                IState parentState = fsm.GetStateById(parent);
                 if(parentState is CompositeState compositeState)
                 {
                     compositeState.Add(state);
@@ -83,8 +86,8 @@ namespace DPAT1
 
         public void AddTransition(string id, string sourceState, string targetState, string trigger, string guard)
         {
-            State source = fsm.GetStateById(sourceState);
-            State target = fsm.GetStateById(targetState);
+            IState source = fsm.GetStateById(sourceState);
+            IState target = fsm.GetStateById(targetState);
 
             if(source != null || target != null)
             {
@@ -120,7 +123,7 @@ namespace DPAT1
         public void ConnectActionToState(string actionId, string stateId)
         {
             Action action = fsm.GetActionById(actionId);
-            State state = fsm.GetStateById(stateId);
+            IState state = fsm.GetStateById(stateId);
 
             if(action == null || state == null)
             {

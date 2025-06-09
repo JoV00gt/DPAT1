@@ -1,30 +1,63 @@
-﻿namespace DPAT1
+﻿using System.Linq.Expressions;
+using DPAT1.Actions;
+using DPAT1.Interfaces;
+using Action = DPAT1.Actions.Action;
+
+namespace DPAT1
 {
     public class FSM
     {
-        internal void AddState(State state)
+        private List<IState> states;
+        private List<Transition> transitions;
+        private List<Trigger> triggers;
+        private List<Action> actions;
+
+        public FSM()
         {
-            throw new NotImplementedException();
+            states = new List<IState>();
+            transitions = new List<Transition>();
+            triggers = new List<Trigger>();
+            actions = new List<Action>();
         }
 
-        internal void AddTransition(Transition transition)
+        public void AddAction(Action action)
         {
-            throw new NotImplementedException();
+            actions.Add(action);
         }
 
-        internal void AddTrigger(Trigger trigger)
+        public void AddState(IState state)
         {
-            throw new NotImplementedException();
+           states.Add(state);
         }
 
-        internal State GetStateById(string parent)
+        public void AddTransition(Transition transition)
         {
-            throw new NotImplementedException();
+            transitions.Add(transition);
         }
 
-        internal Trigger GetTriggerById(string trigger)
+        public void AddTrigger(Trigger trigger)
         {
-            throw new NotImplementedException();
+            triggers.Add(trigger);
+        }
+
+        public Action GetActionById(string id)
+        {
+            return actions.Find(a => a.Id == id);
+        }
+
+        public IState GetStateById(string id)
+        {
+           return states.Find(s => s.Id == id);
+        }
+
+        public Trigger GetTriggerById(string id)
+        {
+            return triggers.Find(t => t.Id == id);
+        }
+
+        public void Accept(Visitor visitor)
+        {
+            //TODO: implementation of the visitor pattern
         }
     }
 }

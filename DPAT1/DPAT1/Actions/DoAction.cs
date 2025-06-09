@@ -1,11 +1,11 @@
-﻿namespace DPAT1
+﻿namespace DPAT1.Actions
 {
-    internal class ExitAction : Action
+    internal class DoAction : Action
     {
         private string id;
         private string description;
 
-        public ExitAction(string id, string description)
+        public DoAction(string id, string description)
         {
             this.id = id;
             this.description = description;

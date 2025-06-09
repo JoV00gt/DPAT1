@@ -1,12 +1,14 @@
-﻿namespace DPAT1
+﻿using DPAT1.Interfaces;
+
+namespace DPAT1
 {
-    internal class Transition
+    public class Transition
     {
         private string id;
-        private State? source;
-        private State? target;
+        private IState? source;
+        private IState? target;
 
-        public Transition(string id, State? source, State? target)
+        public Transition(string id, IState? source, IState? target)
         {
             this.id = id;
             this.source = source;
