@@ -13,6 +13,8 @@ namespace DPAT1.States
             this.name = name;
         }
 
+        public string Id => throw new NotImplementedException();
+
         public void AddTransition(Transition transition)
         {
             throw new NotImplementedException();
