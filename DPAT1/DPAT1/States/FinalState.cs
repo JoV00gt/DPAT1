@@ -1,41 +1,42 @@
-﻿using DPAT1.Interfaces;
+﻿using DPAT1.Enums;
+using DPAT1.Interfaces;
 
 namespace DPAT1.States
 {
     public class FinalState : IState
     {
-        private string id;
-        private string name;
 
-        public FinalState(string id, string name)
-        {
-            this.id = id;
-            this.name = name;
-        }
-
-        public string Id => throw new NotImplementedException();
+        public string Name { get; set; }
+        public StateType Type { get; set; }
+        public string Id { get; set; }
+        private List<Transition> transitions = new List<Transition>();
 
         public void AddTransition(Transition transition)
         {
-            throw new NotImplementedException();
+            transition.Add(transition);
         }
 
         public void ExecuteEntryAction()
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"Entering final state: {Name}");
         }
 
         public void ExecuteExitAction()
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"Exiting final state: {Name}");
         }
 
         public string GetName()
         {
-            throw new NotImplementedException();
+            return Name;
         }
 
         public List<Transition> GetTransitions()
+        {
+            return new List<Transition>(transitions);
+        }
+
+        public void ExecuteDoAction()
         {
             throw new NotImplementedException();
         }

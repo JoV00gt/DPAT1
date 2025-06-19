@@ -15,6 +15,11 @@ namespace DPAT1
             this.target = target;
         }
 
+        internal void Add(Transition transition)
+        {
+            throw new NotImplementedException();
+        }
+
         internal void SetGuardCondition(string guard)
         {
             throw new NotImplementedException();
