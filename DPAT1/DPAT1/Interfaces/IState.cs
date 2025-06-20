@@ -6,15 +6,11 @@ namespace DPAT1.Interfaces
     {
         string Id { get; set; }
         string Name { get; set; }
-        StateType Type { get; set; }
 
+        List<Transition> Transitions { get; set; }
 
         void AddTransition(Transition transition);
         List<Transition> GetTransitions();
-        void ExecuteEntryAction();
-        void ExecuteExitAction();
-
-        void ExecuteDoAction();
         string GetName();
     }
 }

@@ -3,31 +3,17 @@ using DPAT1.Interfaces;
 
 namespace DPAT1.States
 {
-    internal class SimpleState : IState
+    public class SimpleState : IState
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public StateType Type { get; set; }
-        private List<Transition> transitions = new List<Transition>();
+        public List<Transition> Transitions { get; set; }
+
+        public List<Action> Actions { get; set; }
 
         public void AddTransition(Transition transition)
         {
-            transition.Add(transition);
-        }
-
-        public void ExecuteEntryAction()
-        {
-            Console.WriteLine($"Entering simple state: {Name}");
-        }
-
-        public void ExecuteExitAction()
-        {
-            Console.WriteLine($"Exiting simple state: {Name}");
-        }
-
-        public void ExecuteDoAction()
-        {
-            Console.WriteLine($"executing do action in simple state: {Name}");
+            Transitions.Add(transition);
         }
 
         public string GetName()
@@ -37,7 +23,17 @@ namespace DPAT1.States
 
         public List<Transition> GetTransitions()
         {
-            return new List<Transition>(transitions);
+            return Transitions;
+        }
+
+        public List<Action> GetActions()
+        {
+            return Actions;
+        }
+
+        public void AddAction(Action action)
+        {
+            Actions.Add(action);
         }
     }
 }

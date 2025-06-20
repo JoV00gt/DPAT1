@@ -1,13 +1,11 @@
-﻿
-using DPAT1.Actions;
-using DPAT1.Interfaces;
+﻿using DPAT1.Interfaces;
 using DPAT1.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Action = DPAT1.Actions.Action;
+using Action = DPAT1.Action;
 
 namespace DPAT1
 {
