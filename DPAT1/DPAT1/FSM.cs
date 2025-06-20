@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
-using DPAT1.Actions;
 using DPAT1.Interfaces;
-using Action = DPAT1.Actions.Action;
+using Action = DPAT1.Action;
 
 namespace DPAT1
 {
