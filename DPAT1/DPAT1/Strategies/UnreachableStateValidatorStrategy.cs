@@ -15,7 +15,7 @@ namespace DPAT1.Strategies
         {
             return fsm.Children
                 .Where(state => state.Type != StateType.INITIAL)
-                .All(state => IsStateReachable(state, fsm);
+                .All(state => IsStateReachable(state, fsm));
         }
 
         private bool IsStateReachable(IState state, FSM fsm)

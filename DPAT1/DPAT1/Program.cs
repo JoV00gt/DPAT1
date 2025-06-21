@@ -1,6 +1,7 @@
 ﻿
 using DPAT1;
 using DPAT1.Interfaces;
+using DPAT1.Strategies;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,8 +12,7 @@ class Program
 
     static void Main()
     {
-        FSM fsm = new FSM();
-        string filePath = "C:\\Users\\wesle\\Documents\\Code\\DPAT1\\DPAT1\\DPAT1\\PrefabFiles\\example_lamp.fsm"; // Path to your FSM file
+        string filePath = @"../../../FSMFiles/valid_deterministic.fsm";
 
         if (!File.Exists(filePath))
         {
@@ -21,7 +21,44 @@ class Program
         }
         FSMBuilder builder = new FSMBuilder(); 
         Director director = new Director(builder);
-        fsm = director.CreateFSM(filePath, fsm);
+        director.CreateFSM(filePath, builder.GetFSM());
 
+        var fsm = builder.GetFSM();
+        ValidateFSM(fsm);
+
+    }
+
+    private static void ValidateFSM(FSM fsm)
+    {
+        var validators = new List<(IFSMValidator, string name)>
+        {
+            (new NonDeterministicTransitionsValidatorStrategy(), "Non-deterministic transitions"),
+            (new InitialStateTransitionsValidatorStrategy(), "Initial state with incoming transitions"),
+            (new UnreachableStateValidatorStrategy(), "Unreachable states")
+        };
+
+        bool allValid = true;
+
+        foreach (var (validator, name) in validators)
+        {
+            if (validator.IsValid(fsm)) 
+            {
+                Console.WriteLine($"{name}: Valid");
+            } else
+            {
+                Console.WriteLine($"{name}: Invalid");
+                allValid = false;
+            }
+        }
+
+        Console.WriteLine();
+        if(allValid)
+        {
+            Console.WriteLine("FSM is Valid!");
+        }
+        else
+        {
+            Console.WriteLine("FSM contains validation errors");
+        }
     }
 }

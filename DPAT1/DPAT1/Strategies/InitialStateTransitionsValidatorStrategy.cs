@@ -14,6 +14,8 @@ namespace DPAT1.Strategies
         {
             var initialStates = fsm.Children.Where(state => state.Type == StateType.INITIAL);
 
+            Console.WriteLine($"{initialStates.Count()}");
+
             return initialStates.All(initialState => !fsm.Transitions.Any(transition => transition.GetTarget() == initialState));
         }      
     }
