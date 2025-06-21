@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DPAT1
@@ -16,65 +17,149 @@ namespace DPAT1
             this.builder = builder;
         }
 
-        public void CreateFSM(IBuilder builder, string file) 
+        public FSM CreateFSM(string file, FSM fsm)
         {
-            try
+            var stateDict = new Dictionary<string, IState>();
+            var triggerDict = new Dictionary<string, Trigger>();
+            var actionDict = new Dictionary<string, Action>();
+            var transitionList = new List<Transition>();
+
+            string[] lines = File.ReadAllLines(file);
+
+            foreach (string rawLine in lines)
             {
-                string[] lines = File.ReadAllLines(file);
+                string line = rawLine.Trim();
 
-                foreach (string line in lines)
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+                    continue;
+
+                if (line.StartsWith("STATE"))
                 {
-                    string trimmedLine = line.Trim();
-
-                    if(string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith("#"))
+                    var state = ParseStateDefinition(line);
+                    if (state != null)
                     {
-                        continue;
+                        fsm.AddState(state);
+                        stateDict[state.Id] = state;
+                        Console.WriteLine($"Parsed STATE: {state.Id}");
                     }
-
-                    if(trimmedLine.StartsWith("STATE"))
+                }
+                else if (line.StartsWith("TRIGGER"))
+                {
+                    var trigger = ParseTriggerDefinition(line);
+                    if (trigger != null)
                     {
-                        ParseStateDefinition(trimmedLine);
+                        fsm.AddTrigger(trigger);
+                        triggerDict[trigger.Id] = trigger;
+                        Console.WriteLine($"Parsed TRIGGER: {trigger.Id}");
                     }
-                    else if (trimmedLine.StartsWith("TRIGGER"))
+                }
+                else if (line.StartsWith("ACTION"))
+                {
+                    var action = ParseActionDefinition(line);
+                    if (action != null)
                     {
-                        ParseTriggerDefinition(trimmedLine);
+                        fsm.AddAction(action);
+                        actionDict[action.Id] = action;
+                        Console.WriteLine($"Parsed ACTION: {action.Id} ({action.Type})");
                     }
-                    else if (trimmedLine.StartsWith("ACTION"))
+                }
+                else if (line.StartsWith("TRANSITION"))
+                {
+                    var transition = ParseTransitionDefinition(line);
+                    if (transition != null)
                     {
-                        ParseActionDefinition(trimmedLine);
-                    }
-                    else if (trimmedLine.StartsWith("TRANSITION"))
-                    {
-                        ParseTransitionDefinition(trimmedLine);
+                        fsm.AddTransition(transition);
+                        transition.Source.AddTransition(transition);
+                        transitionList.Add(transition);
+                        Console.WriteLine($"Parsed TRANSITION: {transition.Id}");
                     }
                 }
             }
-            catch (Exception ex)
-            {
 
-                Console.WriteLine($"Error reading FSM file: {ex.Message}");
-                throw;
+            builder.ConnectActionsToStates(stateDict, actionDict);
+            return fsm;
+        }
+
+        private Trigger? ParseTriggerDefinition(string trimmedLine)
+        {
+            // Format: TRIGGER <name> "<description>";
+            var match = Regex.Match(trimmedLine, @"^TRIGGER\s+(\S+)\s+""([^""]+)"";?$");
+
+            if (match.Success)
+            {
+                string name = match.Groups[1].Value;
+                string description = match.Groups[2].Value;
+
+                return builder.AddTrigger(name, description);
+            }
+            else
+            {
+                Console.WriteLine($"Could not parse trigger line: {trimmedLine}");
+                return null;
             }
         }
 
-        private void ParseTriggerDefinition(string trimmedLine)
+        private Transition? ParseTransitionDefinition(string trimmedLine)
         {
-            //TODO: Implementation to parse the trigger definition and call builder.AddState()
+            // Format: TRANSITION <name> <from> -> <to> <trigger> "<condition>";
+            var match = Regex.Match(trimmedLine, @"^TRANSITION\s+(\S+)\s+(\S+)\s*->\s*(\S+)\s+(\S+)\s+""([^""]*)"";?$");
+
+            if (match.Success)
+            {
+                string name = match.Groups[1].Value;
+                string from = match.Groups[2].Value;
+                string to = match.Groups[3].Value;
+                string trigger = match.Groups[4].Value;
+                string condition = match.Groups[5].Value;
+
+                return builder.AddTransition(name, from, to, trigger, condition);
+            }
+            else
+            {
+                Console.WriteLine($"Could not parse transition line: {trimmedLine}");
+                return null;
+            }
         }
 
-        private void ParseTransitionDefinition(string trimmedLine)
+        private Action? ParseActionDefinition(string trimmedLine)
         {
-            //TODO: Implementation to parse the transition definition and call builder.AddTransition()
+            // Format: ACTION <name> "<description>" : <action_type>;
+            var match = Regex.Match(trimmedLine, @"^ACTION\s+(\S+)\s+""([^""]+)""\s*:\s*(\w+);?$");
+
+            if (match.Success)
+            {
+                string name = match.Groups[1].Value;
+                string description = match.Groups[2].Value;
+                string actionType = match.Groups[3].Value;
+
+                return builder.AddAction(name, description, actionType);
+            }
+            else
+            {
+                Console.WriteLine($"Could not parse action line: {trimmedLine}");
+                return null;
+            }
         }
 
-        private void ParseActionDefinition(string trimmedLine)
+        private IState? ParseStateDefinition(string trimmedLine)
         {
-            //TODO: Implementation to parse the action definition and call builder.AddAction()
-        }
+            // Format: STATE <name> <parent> "<description>" : <type>;
+            var match = Regex.Match(trimmedLine, @"^STATE\s+(\S+)\s+(\S+)\s+""([^""]+)""\s*:\s*(\w+);?$");
 
-        private void ParseStateDefinition(string trimmedLine)
-        {
-            //TODO: Implementation to parse the state definition and call builder.AddState()
+            if (match.Success)
+            {
+                string name = match.Groups[1].Value;
+                string parent = match.Groups[2].Value;
+                string description = match.Groups[3].Value;
+                string stateType = match.Groups[4].Value;
+
+                return builder.AddState(name, parent, description, stateType);
+            }
+            else
+            {
+                Console.WriteLine($"Could not parse state line: {trimmedLine}");
+                return null;
+            }
         }
 
     }
