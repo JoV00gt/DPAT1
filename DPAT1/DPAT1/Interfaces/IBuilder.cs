@@ -8,11 +8,11 @@ namespace DPAT1.Interfaces
 {
     public interface IBuilder
     {
-        void AddState(string id, string name, string type, string parent);
-        void AddTransition(string id, string sourceState, string targetState, string trigger, string guard);
-        void AddTrigger(string id, string description);
-        void AddAction(string id, string description, string actionType);
-        void ConnectActionToState(string actionId, string stateId);
+        IState? AddState(string id, string name, string type, string parent);
+        Transition? AddTransition(string id, string sourceState, string targetState, string trigger, string guard);
+        Trigger? AddTrigger(string id, string description);
+        Action? AddAction(string id, string description, string actionType);
+        void ConnectActionsToStates(Dictionary<string, IState> states, Dictionary<string, Action> actions);
         FSM GetFSM();
     }
 }

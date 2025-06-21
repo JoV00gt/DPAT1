@@ -9,6 +9,12 @@ namespace DPAT1.States
         public string Name { get; set; }
         public List<Transition> Transitions { get; set; }
 
+        public InitialState(string id, string name) 
+        { 
+            Id = id;
+            Name = name;
+        }
+
         public void AddTransition(Transition transition)
         {
             Transitions.Add(transition);

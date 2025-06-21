@@ -1,4 +1,5 @@
-﻿using DPAT1.Interfaces;
+﻿using DPAT1.Enums;
+using DPAT1.Interfaces;
 using DPAT1.States;
 using System;
 using System.Collections.Generic;
@@ -14,134 +15,170 @@ namespace DPAT1
 
         private FSM fsm;
 
+        private readonly Dictionary<string, IState> _states = new();
+        private readonly Dictionary<string, Trigger> _triggers = new();
+        private readonly Dictionary<string, Action> _actions = new();
+        private readonly Dictionary<string, Transition> _transitions = new();
+
         public FSMBuilder()
         {
             fsm = new FSM();
         }
-        public void AddAction(string id, string description, string actionType)
+
+        public Action? AddAction(string id, string description, string actionTypeString)
         {
-            Action action = null;
-            
-            switch(actionType.ToUpper())
+            if (!Enum.TryParse<ActionType>(actionTypeString, out var actionType))
             {
-                case "ENTRY_ACTION":
-                    action = new EntryAction(id, description);
-                    break;
-                case "DO_Action":
-                    action = new DoAction(id, description);
-                    break;
-                case "EXIT_ACTION":
-                    action = new ExitAction(id, description);
-                    break;
-                case "TRANSITION_ACTION":
-                    action = new TransitionAction(id, description);
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown action type: {actionType}");
+                Console.WriteLine($"[AddAction] Unknown action type: '{actionTypeString}'");
+                return null;
             }
 
-            fsm.AddAction(action);
+            if (_actions.ContainsKey(id))
+            {
+                Console.WriteLine($"[AddAction] Action with ID '{id}' already exists. Skipping.");
+                return null;
+            }
 
+            var action = new Action
+            {
+                Id = id,
+                Description = description,
+                Type = actionType
+            };
+
+            _actions[id] = action;
+
+            Console.WriteLine($"[AddAction] Added action: Id='{id}', Description='{description}', Type='{actionType}'");
+
+            return action;
         }
 
-        public void AddState(string id, string name, string type, string parent)
-        {
-            IState state = null;
+        // Optional: public method to retrieve actions
+        public Action GetAction(string id) => _actions.TryGetValue(id, out var action) ? action : null;
 
-            switch(type.ToUpper())
+        public IState? AddState(string id, string parent, string description, string type)
+        {
+            if (_states.ContainsKey(id))
             {
-                case "INITIAL":
-                    state = new InitialState(id, name);
-                    break;
-                case "FINAL":
-                    state = new FinalState(id, name);
-                    break;
-                case "SIMPLE":
-                    state = new SimpleState(id, name);
-                    break;
-                case "COMPOUND":
-                    state = new CompoundState(id, name);
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown state type: {type}");
+                Console.WriteLine($"[AddState] State with ID '{id}' already exists. Skipping.");
+                return null;
             }
 
-            if (parent != null && parent != "_")
+            IState state = type switch
             {
-                IState parentState = fsm.GetStateById(parent);
-                if(parentState is CompoundState compositeState)
+                "INITIAL" => new InitialState(id, description)
                 {
-                    compositeState.Add(state);
-                } 
-                else
+                    Transitions = new List<Transition>()
+                },
+                "FINAL" => new FinalState
                 {
-                    throw new ArgumentException("Parent state must be a composite state");
+                    Id = id,
+                    Name = description,
+                    Transitions = new List<Transition>()
+                },
+                "SIMPLE" => new SimpleState
+                {
+                    Id = id,
+                    Name = description,
+                    Transitions = new List<Transition>(),
+                    Actions = new List<Action>()
+                },
+                "COMPOUND" => new CompoundState
+                {
+                    Id = id,
+                    Name = description,
+                    Transitions = new List<Transition>(),
+                    Children = new List<IState>()
+                }
+            };
+
+            if (state == null)
+            {
+                Console.WriteLine($"[AddState] Unknown state type: '{type}' for ID '{id}'. Skipping.");
+                return null;
+            }
+
+            _states[id] = state;
+
+            Console.WriteLine($"[AddState] Added {type} state: Id='{id}', Name='{description}', Parent='{parent}'");
+            return state;
+        }
+
+        public Transition? AddTransition(string id, string from, string to, string triggerName, string guard)
+        {
+            if (!_states.TryGetValue(from, out var source))
+            {
+                Console.WriteLine($"[AddTransition] Source state '{from}' not found.");
+                return null;
+            }
+
+            if (!_states.TryGetValue(to, out var target))
+            {
+                Console.WriteLine($"[AddTransition] Target state '{to}' not found.");
+                return null;
+            }
+
+            Trigger trigger = null;
+            if (!string.IsNullOrWhiteSpace(triggerName))
+            {
+                _triggers.TryGetValue(triggerName, out trigger);
+                if (trigger == null)
+                    Console.WriteLine($"[AddTransition] Warning: Trigger '{triggerName}' not found.");
+            }
+
+            Action effect = null;
+            if (_actions.TryGetValue(id, out var action))
+            {
+                effect = action;
+            }
+
+            var transition = new Transition(id, source, target, trigger, guard, effect);
+
+            _transitions[id] = transition;
+
+            Console.WriteLine($"[AddTransition] id='{id}', from='{from}', to='{to}', trigger='{triggerName}', guard='{guard}', effect='{effect?.Id ?? "null"}'");
+            return transition;
+        }
+
+        public Trigger? AddTrigger(string id, string description)
+        {
+            if (_triggers.ContainsKey(id))
+            {
+                Console.WriteLine($"[AddTrigger] Trigger with ID '{id}' already exists. Skipping.");
+                return null;
+            }
+
+            var trigger = new Trigger
+            {
+                Id = id,
+                Description = description
+            };
+
+            _triggers[id] = trigger;
+
+            Console.WriteLine($"[AddTrigger] Added trigger: Id='{id}', Description='{description}'");
+            return trigger;
+        }
+
+        public void ConnectActionsToStates(Dictionary<string, IState> states, Dictionary<string, Action> actions)
+        {
+            foreach (var action in actions.Values)
+            {
+                foreach (var state in states.Values)
+                {
+                    if (state is SimpleState simpleState)
+                    {
+                        if (action.Id == state.Id) // or use a smarter link strategy if needed
+                        {
+                            simpleState.AddAction(action);
+                            Console.WriteLine($"Connected ACTION '{action.Id}' to STATE '{state.Id}'");
+                        }
+                    }
                 }
             }
-
-            fsm.AddState(state);
         }
 
-        public void AddTransition(string id, string sourceState, string targetState, string trigger, string guard)
-        {
-            IState source = fsm.GetStateById(sourceState);
-            IState target = fsm.GetStateById(targetState);
 
-            if(source != null || target != null)
-            {
-                throw new ArgumentException("Source or target State not found");
-            }
-
-            Transition transition = new Transition(id, source, target);
-
-            if (!string.IsNullOrEmpty(trigger) && trigger != "_")
-            {
-                Trigger t = fsm.GetTriggerById(trigger); 
-                if(t != null) 
-                {
-                    transition.SetTrigger(t);
-                }
-            }
-
-            if(!string.IsNullOrEmpty(guard) && guard != "\"\"")
-            {
-                transition.SetGuardCondition(guard);
-            }
-
-            source.AddTransition(transition);
-            fsm.AddTransition(transition);
-        }
-
-        public void AddTrigger(string id, string description)
-        {
-            Trigger trigger = new Trigger(id, description);
-            fsm.AddTrigger(trigger);
-        }
-
-        public void ConnectActionToState(string actionId, string stateId)
-        {
-            Action action = fsm.GetActionById(actionId);
-            IState state = fsm.GetStateById(stateId);
-
-            if(action == null || state == null)
-            {
-                throw new ArgumentException("Action or state not found");
-            }
-
-            if(action is EntryAction entryAction)
-            {
-                //TODO: connect entry action to state
-
-            }
-            else if (action is DoAction doAction)
-            {
-                //TODO: connect do action to state
-            }
-            else if (action is ExitAction exitAction)
-            {
-                //TODO: connect exit action to state
-            }
-        }
 
         public FSM GetFSM()
         {
