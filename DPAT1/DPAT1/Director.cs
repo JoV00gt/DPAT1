@@ -144,7 +144,7 @@ namespace DPAT1
         private IState? ParseStateDefinition(string trimmedLine)
         {
             // Format: STATE <name> <parent> "<description>" : <type>;
-            var match = Regex.Match(trimmedLine, @"^STATE\s+(\S+)\s+(\S+)\s+""([^""]+)""\s*:\s*(\w+);?$");
+            var match = Regex.Match(trimmedLine, @"^STATE\s+(\S+)\s+(\S+)\s+""([^""]*)""\s*:\s*(\w+)\s*;?\s*$");
 
             if (match.Success)
             {

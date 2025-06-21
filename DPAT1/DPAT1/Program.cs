@@ -12,7 +12,7 @@ class Program
 
     static void Main()
     {
-        string filePath = @"../../../FSMFiles/valid_deterministic.fsm";
+        string filePath = @"../../../FSMFiles/invalid_initial.fsm";
 
         if (!File.Exists(filePath))
         {
