@@ -1,41 +1,39 @@
-﻿using DPAT1.Interfaces;
+﻿using DPAT1.Enums;
+using DPAT1.Interfaces;
 
 namespace DPAT1.States
 {
-    internal class SimpleState : IState
+    public class SimpleState : IState
     {
-        private string id;
-        private string name;
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public List<Transition> Transitions { get; set; }
 
-        public SimpleState(string id, string name)
-        {
-            this.id = id;
-            this.name = name;
-        }
+        public List<Action> Actions { get; set; }
 
         public void AddTransition(Transition transition)
         {
-            throw new NotImplementedException();
-        }
-
-        public void ExecuteEntryAction()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ExecuteExitAction()
-        {
-            throw new NotImplementedException();
+            Transitions.Add(transition);
         }
 
         public string GetName()
         {
-            throw new NotImplementedException();
+            return Name;
         }
 
         public List<Transition> GetTransitions()
         {
-            throw new NotImplementedException();
+            return Transitions;
+        }
+
+        public List<Action> GetActions()
+        {
+            return Actions;
+        }
+
+        public void AddAction(Action action)
+        {
+            Actions.Add(action);
         }
     }
 }

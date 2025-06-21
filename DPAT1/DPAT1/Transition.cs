@@ -4,25 +4,41 @@ namespace DPAT1
 {
     public class Transition
     {
-        private string id;
-        private IState? source;
-        private IState? target;
+        public string Id { get; set; }
+        public IState Source { get; set; }
+        public IState Target { get; set; }
 
-        public Transition(string id, IState? source, IState? target)
+        public Trigger? Trigger { get; set; }
+        public string? Guard { get; set; }
+        public Action? Effect { get; set; }
+
+
+        public Transition(string id, IState source, IState target, Trigger? trigger = null, string? guard = null, Action? effect = null)
         {
-            this.id = id;
-            this.source = source;
-            this.target = target;
+            this.Id = id;
+            this.Source = source;
+            this.Target = target;
+            this.Trigger = trigger;
+            this.Guard = guard;
+            this.Effect = effect;
+        }
+            
+        public string getGuard()
+        {
+            return Guard;
         }
 
-        internal void SetGuardCondition(string guard)
+        public IState getSource() { return Source; }
+        public IState getTarget() { return Target; }
+        public Trigger getTrigger()
         {
-            throw new NotImplementedException();
+            return Trigger;
         }
 
-        internal void SetTrigger(Trigger t)
+        public Action getEffect()
         {
-            throw new NotImplementedException();
+            return Effect;
         }
+
     }
 }

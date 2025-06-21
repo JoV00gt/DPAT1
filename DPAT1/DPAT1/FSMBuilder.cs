@@ -1,13 +1,11 @@
-﻿
-using DPAT1.Actions;
-using DPAT1.Interfaces;
+﻿using DPAT1.Interfaces;
 using DPAT1.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Action = DPAT1.Actions.Action;
+using Action = DPAT1.Action;
 
 namespace DPAT1
 {
@@ -62,7 +60,7 @@ namespace DPAT1
                     state = new SimpleState(id, name);
                     break;
                 case "COMPOUND":
-                    state = new CompositeState(id, name);
+                    state = new CompoundState(id, name);
                     break;
                 default:
                     throw new ArgumentException($"Unknown state type: {type}");
@@ -71,7 +69,7 @@ namespace DPAT1
             if (parent != null && parent != "_")
             {
                 IState parentState = fsm.GetStateById(parent);
-                if(parentState is CompositeState compositeState)
+                if(parentState is CompoundState compositeState)
                 {
                     compositeState.Add(state);
                 } 

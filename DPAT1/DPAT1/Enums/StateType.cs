@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DPAT1.Actions
+namespace DPAT1.Enums
 {
-    public class Action
+    public enum StateType
     {
-        public string Id { get; internal set; }
+        INITIAL,
+        SIMPLE,
+        COMPOUND,
+        FINAL
     }
 }
