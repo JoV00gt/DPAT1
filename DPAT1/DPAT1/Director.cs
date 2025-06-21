@@ -16,7 +16,7 @@ namespace DPAT1
             this.builder = builder;
         }
 
-        public void CreateFSM(IBuilder builder, string file) 
+        public void CreateFSM(string file) 
         {
             try
             {
