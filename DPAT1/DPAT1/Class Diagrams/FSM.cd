@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="DPAT1.FSM">
-    <Position X="21.5" Y="1.75" Width="1.5" />
+    <Position X="20.75" Y="1.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AIAQAAAAAAAAAiAAAAgIAAAAAAAAAgIEAAAAAAAgCAg=</HashCode>
+      <HashCode>AIAQAAAAAAAAAiAAAAgMAAAAAAAAAgIAAAAACAAgCAA=</HashCode>
       <FileName>FSM.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DPAT1.States.CompoundState">
     <Position X="7.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAACEAAQAAAAAQAIAAAAACAAABAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAAgCEAAQAAAAAQAIAAQAACAAABAA=</HashCode>
       <FileName>States\CompoundState.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -24,7 +24,7 @@
   <Class Name="DPAT1.States.FinalState">
     <Position X="11.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAACAAAQAAAAAAAIAAAAACAAABAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAAgCAAAQAAAAAAAIAAQAACAAABAA=</HashCode>
       <FileName>States\FinalState.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -32,7 +32,7 @@
   <Class Name="DPAT1.States.InitialState">
     <Position X="8.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAACAAAQAAAAAAAIAAAAACAAABAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAAgCAAAQAAAAAAAIAAQAACAAABAA=</HashCode>
       <FileName>States\InitialState.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -40,7 +40,7 @@
   <Class Name="DPAT1.States.SimpleState">
     <Position X="14.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAIAAAAAAAAACAAAQAAAAAAAIAAAAACAAgBAA=</HashCode>
+      <HashCode>AAACAAAAIAAAAAAAAgCAAAQAAAAAAAIAAQAACAAgBAA=</HashCode>
       <FileName>States\SimpleState.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -62,14 +62,14 @@
   <Class Name="DPAT1.Transition">
     <Position X="16.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACgCAAAggAABAAAAAAACAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <HashCode>IAACCAAAEggAABAAAAAAACAAAAAAAAAAABAAAAAAAIA=</HashCode>
       <FileName>Transition.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Target" />
       <Property Name="Source" />
-      <Property Name="Effect" />
+      <Property Name="Target" />
       <Property Name="Trigger" />
+      <Property Name="Effect" />
     </ShowAsAssociation>
   </Class>
   <Class Name="DPAT1.Trigger">
@@ -82,7 +82,7 @@
   <Interface Name="DPAT1.Interfaces.IState">
     <Position X="12.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAACAAAQAAAAAAAIAAAAACAAABAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAAgCAAAQAAAAAAAIAAQAACAAABAA=</HashCode>
       <FileName>Interfaces\IState.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
