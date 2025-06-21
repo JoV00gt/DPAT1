@@ -8,6 +8,7 @@ namespace DPAT1.States
         public string Id { get; set; }
         public string Name { get; set; }
         public List<Transition> Transitions { get; set; }
+        public StateType Type { get; set; }
 
         public void AddTransition(Transition transition)
         {
@@ -17,6 +18,11 @@ namespace DPAT1.States
         public string GetName()
         {
             return Name;
+        }
+
+        public StateType GetStateType()
+        {
+            return Type;
         }
 
         public List<Transition> GetTransitions()

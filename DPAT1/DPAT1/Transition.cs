@@ -23,19 +23,19 @@ namespace DPAT1
             this.Effect = effect;
         }
             
-        public string getGuard()
+        public string GetGuard()
         {
             return Guard;
         }
 
-        public IState getSource() { return Source; }
-        public IState getTarget() { return Target; }
-        public Trigger getTrigger()
+        public IState GetSource() { return Source; }
+        public IState GetTarget() { return Target; }
+        public Trigger GetTrigger()
         {
             return Trigger;
         }
 
-        public Action getEffect()
+        public Action GetEffect()
         {
             return Effect;
         }

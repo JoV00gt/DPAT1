@@ -10,6 +10,8 @@ namespace DPAT1.States
         public List<Transition> Transitions { get; set; }
         public List<IState> Children { get; set; }
 
+        public StateType Type { get; set; }
+
         public void AddTransition(Transition transition)
         {
             Transitions.Add(transition);
@@ -28,6 +30,11 @@ namespace DPAT1.States
         public List<Transition> GetTransitions()
         {
             return Transitions;
+        }
+
+        public StateType GetStateType()
+        {
+            return Type;
         }
     }
 }
