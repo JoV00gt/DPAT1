@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DPAT1.Strategies
 {
-    public class InitialStateTransitionsValidatorStrategy : IFSMValidator
+    public class InitialStateTransitionsValidator : IFSMValidator
     {
         public bool IsValid(FSM fsm)
         {

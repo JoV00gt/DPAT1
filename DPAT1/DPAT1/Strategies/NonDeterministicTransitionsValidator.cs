@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DPAT1.Strategies
 {
-    public class NonDeterministicTransitionsValidatorStrategy : IFSMValidator
+    public class NonDeterministicTransitionsValidator : IFSMValidator
     {
         public bool IsValid(FSM fsm)
         {

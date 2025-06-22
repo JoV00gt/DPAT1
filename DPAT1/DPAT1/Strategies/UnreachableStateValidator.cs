@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DPAT1.Strategies
 {
-    public class UnreachableStateValidatorStrategy : IFSMValidator
+    public class UnreachableStateValidator : IFSMValidator
     {
         public bool IsValid(FSM fsm)
         {

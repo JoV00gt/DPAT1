@@ -10,9 +10,18 @@ using System.Text.RegularExpressions;
 class Program
 {
 
+
+
     static void Main()
     {
         string filePath = @"../../../FSMFiles/example_lamp.fsm";
+        var validators = new List<(IFSMValidator, string name)>
+        {
+            (new NonDeterministicTransitionsValidator(), "Non-deterministic transitions"),
+            (new InitialStateTransitionsValidator(), "Initial state with incoming transitions"),
+            (new UnreachableStateValidator(), "Unreachable states")
+        };
+
 
         if (!File.Exists(filePath))
         {
@@ -24,18 +33,12 @@ class Program
         director.CreateFSM(filePath, builder.GetFSM());
 
         var fsm = builder.GetFSM();
-        ValidateFSM(fsm);
+        ValidateFSM(fsm, validators);
 
     }
 
-    private static void ValidateFSM(FSM fsm)
+    private static void ValidateFSM(FSM fsm, List<(IFSMValidator, string name)> validators)
     {
-        var validators = new List<(IFSMValidator, string name)>
-        {
-            (new NonDeterministicTransitionsValidatorStrategy(), "Non-deterministic transitions"),
-            (new InitialStateTransitionsValidatorStrategy(), "Initial state with incoming transitions"),
-            (new UnreachableStateValidatorStrategy(), "Unreachable states")
-        };
 
         bool allValid = true;
 
