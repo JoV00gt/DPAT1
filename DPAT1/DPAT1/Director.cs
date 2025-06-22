@@ -101,16 +101,17 @@ namespace DPAT1
 
         private Transition? ParseTransitionDefinition(string trimmedLine)
         {
-            // Format: TRANSITION <name> <from> -> <to> <trigger> "<condition>";
-            var match = Regex.Match(trimmedLine, @"^TRANSITION\s+(\S+)\s+(\S+)\s*->\s*(\S+)\s+(\S+)\s+""([^""]*)"";?$");
+            // Format: TRANSITION <name> <from> -> <to> [<trigger>] ["<condition>"];
+            // Both trigger and condition are optional
+            var match = Regex.Match(trimmedLine, @"^TRANSITION\s+(\S+)\s+(\S+)\s*->\s*(\S+)(?:\s+(\S+))?(?:\s+""([^""]*)"")?\s*;?\s*$");
 
             if (match.Success)
             {
                 string name = match.Groups[1].Value;
                 string from = match.Groups[2].Value;
                 string to = match.Groups[3].Value;
-                string trigger = match.Groups[4].Value;
-                string condition = match.Groups[5].Value;
+                string trigger = match.Groups[4].Success ? match.Groups[4].Value : null; // Can be null
+                string condition = match.Groups[5].Success ? match.Groups[5].Value : null; // Can be null
 
                 return builder.AddTransition(name, from, to, trigger, condition);
             }
@@ -120,7 +121,6 @@ namespace DPAT1
                 return null;
             }
         }
-
         private Action? ParseActionDefinition(string trimmedLine)
         {
             // Format: ACTION <name> "<description>" : <action_type>;

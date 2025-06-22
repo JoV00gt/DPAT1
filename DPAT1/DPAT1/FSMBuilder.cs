@@ -107,6 +107,16 @@ namespace DPAT1
 
             _states[id] = state;
 
+            if (parent != "_" && _states.ContainsKey(parent))
+            {
+                var parentState = _states[parent];
+                if (parentState is CompoundState compoundParent)
+                {
+                    compoundParent.AddChild(state); 
+                    Console.WriteLine($"[AddState] Added {state.Name} as child of {parentState.Name}");
+                }
+            }
+
             Console.WriteLine($"[AddState] Added {type} state: Id='{id}', Name='{description}', Parent='{parent}'");
             return state;
         }
