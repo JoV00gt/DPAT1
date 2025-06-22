@@ -6,8 +6,8 @@ namespace DPAT1
     {
         public List<IState> Children { get; set; }
         public List<Transition> Transitions { get; set; }
-        private List<Trigger> triggers;
-        private List<Action> actions;
+        public List<Trigger> triggers { get; set; }
+        public List<Action> actions { get; set; }
 
         public FSM()
         {
@@ -36,8 +36,5 @@ namespace DPAT1
         {
             triggers.Add(trigger);
         }
-
-        public List<Action> GetActions() => actions;
-        public List<Trigger> GetTriggers() => triggers;
     }
 }

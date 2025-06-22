@@ -12,9 +12,9 @@ namespace DPAT1.View
 
             Console.WriteLine("=== Finite State Machine ===\n");
 
-            PrintCollection("Actions", fsm.GetActions(), a => $"- {a.Id}");
+            PrintCollection("Actions", fsm.actions, a => $"- {a.Id}");
 
-            PrintCollection("Triggers", fsm.GetTriggers(), t => $"- {t.Id}");
+            PrintCollection("Triggers", fsm.triggers, t => $"- {t.Id}");
 
             Console.WriteLine("States:");
             StateRenderer(fsm);
