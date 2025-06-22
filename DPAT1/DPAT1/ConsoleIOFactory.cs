@@ -7,7 +7,7 @@ using DPAT1.Interfaces;
 
 namespace DPAT1
 {
-    internal class ConsoleIOFactory : IUIFactory
+    public class ConsoleIOFactory : IUIFactory
     {
         private readonly FSM fsm;
 

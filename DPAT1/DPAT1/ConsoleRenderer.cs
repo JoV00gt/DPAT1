@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DPAT1
 {
-    internal class ConsoleRenderer : IOutputRenderer
+    public class ConsoleRenderer : IOutputRenderer
     {
         public FSM Fsm { get; }
 

@@ -4,7 +4,7 @@ using DPAT1.Interfaces;
 
 namespace DPAT1
 {
-    internal class PrintVisitor : IVisitor
+    public class PrintVisitor : IVisitor
     {
         public void Visit(ConsoleRenderer consoleRenderer)
         {
