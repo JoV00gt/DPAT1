@@ -13,5 +13,7 @@ namespace DPAT1
         public const int SINGLE_UNREACHABLE_STATE = 1;
         public const int NO_UNREACHABLE_STATES = 0;
         public const int FIRST_ELEMENT_INDEX = 0;
+        public const int NO_TRANSITIONS = 0;
+        public const int MIN_GUARDS_UNIQUENESS_CHECK = 2;
     }
 }

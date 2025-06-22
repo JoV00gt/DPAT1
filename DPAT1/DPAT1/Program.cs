@@ -1,5 +1,4 @@
 ﻿using DPAT1;
-using DPAT1.Context;
 using DPAT1.Interfaces;
 using DPAT1.Strategies;
 using System;
@@ -9,7 +8,7 @@ class Program
 {
     static void Main()
     {
-        string filePath = @"../../../FSMFiles/example_user_account.fsm";
+        string filePath = @"../../../FSMFiles/valid_deterministic.fsm";
 
         if (!File.Exists(filePath))
         {
