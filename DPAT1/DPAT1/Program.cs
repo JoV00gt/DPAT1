@@ -1,33 +1,25 @@
-
 using DPAT1;
+using DPAT1.Context;
 using DPAT1.Interfaces;
 using DPAT1.Strategies;
+using System;
+using System.IO;
 
 class Program
 {
-
-
-
     static void Main()
     {
         string filePath = @"../../../FSMFiles/example_user_account.fsm";
-        var validators = new List<(IFSMValidator, string name)>
-        {
-            (new NonDeterministicTransitionsValidator(), "Non-deterministic transitions"),
-            (new InitialStateTransitionsValidator(), "Initial state with incoming transitions"),
-            (new UnreachableStateValidator(), "Unreachable states")
-        };
-
 
         if (!File.Exists(filePath))
         {
             Console.WriteLine("File not found.");
             return;
         }
-        FSMBuilder builder = new FSMBuilder(); 
+
+        FSMBuilder builder = new FSMBuilder();
         Director director = new Director(builder);
         director.CreateFSM(filePath, builder.GetFSM());
-
         var fsm = builder.GetFSM();
         ValidateFSM(fsm, validators);
         IUIFactory factory = new ConsoleIOFactory(fsm);
@@ -36,31 +28,22 @@ class Program
         renderer.Accept(visitor);
     }
 
-    private static void ValidateFSM(FSM fsm, List<(IFSMValidator, string name)> validators)
-    {
+        var context = new FSMValidationContext();
 
-        bool allValid = true;
+        bool isNonDetValid = ValidateWith(context, fsm, new NonDeterministicTransitionsValidator(), "Non-deterministic transitions");
+        bool isInitialValid = ValidateWith(context, fsm, new InitialStateTransitionsValidator(), "Initial state with incoming transitions");
+        bool isReachableValid = ValidateWith(context, fsm, new UnreachableStateValidator(), "Unreachable states");
 
-        foreach (var (validator, name) in validators)
-        {
-            if (validator.IsValid(fsm)) 
-            {
-                Console.WriteLine($"{name}: Valid");
-            } else
-            {
-                Console.WriteLine($"{name}: Invalid");
-                allValid = false;
-            }
-        }
-
+        bool allValid = isNonDetValid && isInitialValid && isReachableValid;
         Console.WriteLine();
-        if(allValid)
-        {
-            Console.WriteLine("FSM is Valid!");
-        }
-        else
-        {
-            Console.WriteLine("FSM contains validation errors");
-        }
+        Console.WriteLine(allValid ? "FSM is Valid!" : "FSM contains validation errors");
+    }
+
+    private static bool ValidateWith(FSMValidationContext context, FSM fsm, IFSMValidator strategy, string description)
+    {
+        context.SetStrategy(strategy);
+        bool isValid = context.Validate(fsm);
+        Console.WriteLine($"{description}: {(isValid ? "Valid" : "Invalid")}");
+        return isValid;
     }
 }
