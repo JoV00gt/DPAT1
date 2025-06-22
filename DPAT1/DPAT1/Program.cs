@@ -8,7 +8,7 @@ class Program
 {
     static void Main()
     {
-        string filePath = @"../../../FSMFiles/valid_deterministic.fsm";
+        string filePath = @"../../../FSMFiles/example_user_account.fsm";
 
         if (!File.Exists(filePath))
         {

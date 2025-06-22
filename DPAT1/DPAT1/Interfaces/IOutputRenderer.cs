@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DPAT1.Interfaces
 {
-    internal interface IOutputRenderer
+    public interface IOutputRenderer
     {
-        void Accept(IVisitor visitor); // Renderer accepts a visitor
+        void Accept(IVisitor visitor);
     }
 }

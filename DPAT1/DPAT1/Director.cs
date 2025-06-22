@@ -91,98 +91,68 @@ namespace DPAT1
 
         private Trigger? ParseTriggerDefinition(string trimmedLine)
         {
-            // Format: TRIGGER <name> "<description>";
-            var match = Regex.Match(trimmedLine, @"^TRIGGER\s+(\S+)\s+""([^""]+)"";?$");
+            var match = RegexPatterns.Trigger.Match(trimmedLine);
 
             if (match.Success)
             {
-                string name = match.Groups[1].Value;
-                string description = match.Groups[2].Value;
-
+                string name = match.Groups["name"].Value;
+                string description = match.Groups["desc"].Value;
                 return builder.AddTrigger(name, description);
             }
-            else
-            {
-                Console.WriteLine($"Could not parse trigger line: {trimmedLine}");
-                return null;
-            }
+            return null;
         }
 
         private Transition? ParseTransitionDefinition(string trimmedLine)
         {
-            // Format: TRANSITION <id> <from_state> -> <to_state> [<trigger>] ["<guard>"];
-            var match = Regex.Match(trimmedLine, @"^TRANSITION\s+(\S+)\s+(\S+)\s*->\s*(\S+)(?:\s+(\S+))?\s*(?:""([^""]*)"")?\s*;?\s*$");
+            var match = RegexPatterns.Transition.Match(trimmedLine);
 
             if (match.Success)
             {
-                string id = match.Groups[1].Value;
-                string from = match.Groups[2].Value;
-                string to = match.Groups[3].Value;
-                string? trigger = null;
-                string? guard = null;
-
-                if (match.Groups[5].Success)
-                {
-                    guard = match.Groups[5].Value;
-                    if (match.Groups[4].Success)
-                        trigger = match.Groups[4].Value;
-                }
-                else if (match.Groups[4].Success)
-                {
-                    trigger = match.Groups[4].Value;
-                }
+                string id = match.Groups["id"].Value;
+                string from = match.Groups["from"].Value;
+                string to = match.Groups["to"].Value;
+                string? trigger = match.Groups["trigger"].Success ? match.Groups["trigger"].Value : null;
+                string? guard = match.Groups["guard"].Success ? match.Groups["guard"].Value : null;
 
                 return builder.AddTransition(id, from, to, trigger, guard);
             }
-            else
-            {
-                Console.WriteLine($"Could not parse transition line: {trimmedLine}");
-                return null;
-            }
+            return null;
         }
         private Action? ParseActionDefinition(string trimmedLine)
         {
-            // Format: ACTION <name> "<description>" : <action_type>;
-            var match = Regex.Match(trimmedLine, @"^ACTION\s+(\S+)\s+""([^""]+)""\s*:\s*(\w+);?$");
+            var match = RegexPatterns.Action.Match(trimmedLine);
 
             if (match.Success)
             {
-                string name = match.Groups[1].Value;
-                string description = match.Groups[2].Value;
-                string actionType = match.Groups[3].Value;
+                string name = match.Groups["name"].Value;
+                string description = match.Groups["desc"].Value;
+                string actionType = match.Groups["type"].Value;
 
                 return builder.AddAction(name, description, actionType);
             }
-            else
-            {
-                Console.WriteLine($"Could not parse action line: {trimmedLine}");
-                return null;
-            }
+            return null;
         }
 
         private IState? ParseStateDefinition(string trimmedLine)
         {
-            // Format: STATE <name> <parent> "<description>" : <type>;
-            var match = Regex.Match(trimmedLine, @"^STATE\s+(\S+)\s+(\S+)\s+""([^""]*)""\s*:\s*(\w+)\s*;?\s*$");
+            var match = RegexPatterns.State.Match(trimmedLine);
 
             if (match.Success)
             {
-                string name = match.Groups[1].Value;
-                string parent = match.Groups[2].Value;
-                string description = match.Groups[3].Value;
-                if (!Enum.TryParse<StateType>(match.Groups[4].Value, true, out var stateType))
+                string name = match.Groups["name"].Value;
+                string parent = match.Groups["parent"].Value;
+                string description = match.Groups["desc"].Value;
+                string type = match.Groups["type"].Value;
+
+                if (!Enum.TryParse<StateType>(type, true, out var stateType))
                 {
-                    Console.WriteLine($"[ParseStateDefinition] Unknown state type: '{match.Groups[4].Value}'");
+                    Console.WriteLine($"[ParseStateDefinition] Unknown state type: '{type}'");
                     return null;
                 }
 
                 return builder.AddState(name, parent, description, stateType);
             }
-            else
-            {
-                Console.WriteLine($"Could not parse state line: {trimmedLine}");
-                return null;
-            }
+            return null;
         }
 
     }

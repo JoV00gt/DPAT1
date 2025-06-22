@@ -8,7 +8,7 @@ namespace DPAT1
     {
         public void Visit(ConsoleRenderer consoleRenderer)
         {
-            var fsm = consoleRenderer.Fsm;
+            FSM fsm = consoleRenderer.Fsm;
 
             Console.WriteLine("=== Finite State Machine ===\n");
 
@@ -17,6 +17,15 @@ namespace DPAT1
             PrintCollection("Triggers", fsm.GetTriggers(), t => $"- {t.Id}");
 
             Console.WriteLine("States:");
+            StateRenderer(fsm);
+
+            TransitionRenderer(fsm);
+
+            Console.WriteLine("\n=== End of FSM ===");
+        }
+
+        private void StateRenderer(FSM fsm)
+        {
             if (fsm.Children.Count == 0)
             {
                 Console.WriteLine("  (none)");
@@ -46,7 +55,10 @@ namespace DPAT1
                     }
                 }
             }
+        }
 
+        private void TransitionRenderer(FSM fsm)
+        {
             if (fsm.Transitions.Count > 0)
             {
                 Console.WriteLine("\nGlobal Transitions:");
@@ -57,8 +69,6 @@ namespace DPAT1
                     Console.WriteLine($"  - {t.Source.Id} --> {t.Target.Id} on {triggerText}{guardText}");
                 }
             }
-
-            Console.WriteLine("\n=== End of FSM ===");
         }
 
         private void PrintCollection<T>(string title, List<T> items, Func<T, string> formatter)

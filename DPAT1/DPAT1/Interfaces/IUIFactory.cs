@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DPAT1.Interfaces
 {
-    internal interface IUIFactory
+    public interface IUIFactory
     {
         IOutputRenderer CreateRenderer(); 
         IVisitor CreateVisitor();

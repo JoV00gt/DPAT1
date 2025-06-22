@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DPAT1.Interfaces
 {
-    internal interface IVisitor
+    public interface IVisitor
     {
         void Visit(ConsoleRenderer consoleRenderer);
     }
