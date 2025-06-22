@@ -53,10 +53,5 @@ namespace DPAT1
         {
             return triggers.Find(t => t.Id == id);
         }
-
-        public void Accept(Visitor visitor)
-        {
-            //TODO: implementation of the visitor pattern
-        }
     }
 }

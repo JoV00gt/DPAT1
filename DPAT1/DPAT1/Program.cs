@@ -12,7 +12,7 @@ class Program
 
     static void Main()
     {
-        string filePath = @"../../../FSMFiles/example_lamp.fsm";
+        string filePath = @"../../../FSMFiles/example_user_account.fsm";
 
         if (!File.Exists(filePath))
         {
@@ -25,7 +25,10 @@ class Program
 
         var fsm = builder.GetFSM();
         ValidateFSM(fsm);
-
+        IUIFactory factory = new ConsoleIOFactory(fsm);
+        IOutputRenderer renderer = factory.CreateRenderer();
+        IVisitor visitor = factory.CreateVisitor();
+        renderer.Accept(visitor);
     }
 
     private static void ValidateFSM(FSM fsm)
