@@ -1,4 +1,4 @@
-﻿
+
 using DPAT1;
 using DPAT1.Interfaces;
 using DPAT1.Strategies;
@@ -10,9 +10,18 @@ using System.Text.RegularExpressions;
 class Program
 {
 
+
+
     static void Main()
     {
-        string filePath = @"../../../FSMFiles/example_user_account.fsm";
+        string filePath = @"../../../FSMFiles/example_lamp.fsm";
+        var validators = new List<(IFSMValidator, string name)>
+        {
+            (new NonDeterministicTransitionsValidator(), "Non-deterministic transitions"),
+            (new InitialStateTransitionsValidator(), "Initial state with incoming transitions"),
+            (new UnreachableStateValidator(), "Unreachable states")
+        };
+
 
         if (!File.Exists(filePath))
         {
@@ -24,21 +33,15 @@ class Program
         director.CreateFSM(filePath, builder.GetFSM());
 
         var fsm = builder.GetFSM();
-        ValidateFSM(fsm);
+        ValidateFSM(fsm, validators);
         IUIFactory factory = new ConsoleIOFactory(fsm);
         IOutputRenderer renderer = factory.CreateRenderer();
-        IVisitor visitor = factory.CreateVisitor();
         renderer.Accept(visitor);
+        IVisitor visitor = factory.CreateVisitor();
     }
 
-    private static void ValidateFSM(FSM fsm)
+    private static void ValidateFSM(FSM fsm, List<(IFSMValidator, string name)> validators)
     {
-        var validators = new List<(IFSMValidator, string name)>
-        {
-            (new NonDeterministicTransitionsValidatorStrategy(), "Non-deterministic transitions"),
-            (new InitialStateTransitionsValidatorStrategy(), "Initial state with incoming transitions"),
-            (new UnreachableStateValidatorStrategy(), "Unreachable states")
-        };
 
         bool allValid = true;
 

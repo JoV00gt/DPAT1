@@ -26,7 +26,7 @@ namespace DPAT1.Tests
             var transition = new Transition("t1", simpleState, initialState);
             fsm.AddTransition(transition);
 
-            var validator = new InitialStateTransitionsValidatorStrategy();
+            var validator = new InitialStateTransitionsValidator();
 
             // Act
             bool result = validator.IsValid(fsm);
@@ -43,7 +43,7 @@ namespace DPAT1.Tests
             var simpleState = new SimpleState { Id = "simple", Name = "Simple", Type = StateType.SIMPLE, Transitions = new List<Transition>() };
             fsm.AddState(simpleState);
 
-            var validator = new InitialStateTransitionsValidatorStrategy();
+            var validator = new InitialStateTransitionsValidator();
 
             // Act
             bool result = validator.IsValid(fsm);
@@ -70,7 +70,7 @@ namespace DPAT1.Tests
             fsm.AddTransition(automaticTransition1);
             fsm.AddTransition(automaticTransition2);
 
-            var validator = new NonDeterministicTransitionsValidatorStrategy();
+            var validator = new NonDeterministicTransitionsValidator();
 
             // Act
             bool result = validator.IsValid(fsm);
@@ -99,7 +99,7 @@ namespace DPAT1.Tests
             fsm.AddTransition(transition1);
             fsm.AddTransition(transition2);
 
-            var validator = new NonDeterministicTransitionsValidatorStrategy();
+            var validator = new NonDeterministicTransitionsValidator();
 
             // Act
             bool result = validator.IsValid(fsm);
@@ -128,7 +128,7 @@ namespace DPAT1.Tests
             fsm.AddTransition(transition1);
             fsm.AddTransition(transition2);
 
-            var validator = new NonDeterministicTransitionsValidatorStrategy();
+            var validator = new NonDeterministicTransitionsValidator();
 
             // Act
             bool result = validator.IsValid(fsm);
@@ -155,7 +155,7 @@ namespace DPAT1.Tests
             fsm.AddTransition(transition1);
             fsm.AddTransition(transition2);
 
-            var validator = new UnreachableStateValidatorStrategy();
+            var validator = new UnreachableStateValidator();
 
             // Act
             bool result = validator.IsValid(fsm);
@@ -175,11 +175,10 @@ namespace DPAT1.Tests
             fsm.AddState(simpleState1);
             fsm.AddState(simpleState2);
 
-            // Only one transition - simpleState1 becomes unreachable (implicit initial state)
             var transition = new Transition("t1", simpleState1, simpleState2);
             fsm.AddTransition(transition);
 
-            var validator = new UnreachableStateValidatorStrategy();
+            var validator = new UnreachableStateValidator();
 
             // Act
             bool result = validator.IsValid(fsm);
@@ -206,7 +205,7 @@ namespace DPAT1.Tests
             var transition = new Transition("t1", initialState, childState);
             fsm.AddTransition(transition);
 
-            var validator = new UnreachableStateValidatorStrategy();
+            var validator = new UnreachableStateValidator();
 
             // Act
             bool result = validator.IsValid(fsm);

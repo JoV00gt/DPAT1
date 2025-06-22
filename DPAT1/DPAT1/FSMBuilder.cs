@@ -194,7 +194,7 @@ namespace DPAT1
                 {
                     if (state is SimpleState simpleState)
                     {
-                        if (action.Id == state.Id) // or use a smarter link strategy if needed
+                        if (action.Id == state.Id)
                         {
                             simpleState.AddAction(action);
                             Console.WriteLine($"Connected ACTION '{action.Id}' to STATE '{state.Id}'");
