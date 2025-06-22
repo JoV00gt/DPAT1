@@ -1,5 +1,4 @@
 using DPAT1;
-using DPAT1.Context;
 using DPAT1.Interfaces;
 using DPAT1.Strategies;
 using System;
@@ -21,13 +20,6 @@ class Program
         Director director = new Director(builder);
         director.CreateFSM(filePath, builder.GetFSM());
         var fsm = builder.GetFSM();
-        ValidateFSM(fsm, validators);
-        IUIFactory factory = new ConsoleIOFactory(fsm);
-        IOutputRenderer renderer = factory.CreateRenderer();
-        IVisitor visitor = factory.CreateVisitor();
-        renderer.Accept(visitor);
-    }
-
         var context = new FSMValidationContext();
 
         bool isNonDetValid = ValidateWith(context, fsm, new NonDeterministicTransitionsValidator(), "Non-deterministic transitions");
@@ -37,6 +29,11 @@ class Program
         bool allValid = isNonDetValid && isInitialValid && isReachableValid;
         Console.WriteLine();
         Console.WriteLine(allValid ? "FSM is Valid!" : "FSM contains validation errors");
+        IUIFactory factory = new ConsoleIOFactory(fsm);
+        IOutputRenderer renderer = factory.CreateRenderer();
+        IVisitor visitor = factory.CreateVisitor();
+        renderer.Accept(visitor);
+
     }
 
     private static bool ValidateWith(FSMValidationContext context, FSM fsm, IFSMValidator strategy, string description)
