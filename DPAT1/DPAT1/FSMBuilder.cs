@@ -64,22 +64,27 @@ namespace DPAT1
                 return null;
             }
 
-            IState state = type switch
+            IState? state = type switch
             {
-                "INITIAL" => new InitialState(id, description)
+                "INITIAL" => new InitialState
                 {
+                    Id = id,
+                    Name = description,
+                    Type = StateType.INITIAL,
                     Transitions = new List<Transition>()
                 },
                 "FINAL" => new FinalState
                 {
                     Id = id,
                     Name = description,
+                    Type = StateType.FINAL,
                     Transitions = new List<Transition>()
                 },
                 "SIMPLE" => new SimpleState
                 {
                     Id = id,
                     Name = description,
+                    Type = StateType.SIMPLE,
                     Transitions = new List<Transition>(),
                     Actions = new List<Action>()
                 },
@@ -87,9 +92,11 @@ namespace DPAT1
                 {
                     Id = id,
                     Name = description,
+                    Type = StateType.COMPOUND,
                     Transitions = new List<Transition>(),
                     Children = new List<IState>()
-                }
+                },
+                _ => null
             };
 
             if (state == null)
@@ -99,6 +106,16 @@ namespace DPAT1
             }
 
             _states[id] = state;
+
+            if (parent != "_" && _states.ContainsKey(parent))
+            {
+                var parentState = _states[parent];
+                if (parentState is CompoundState compoundParent)
+                {
+                    compoundParent.AddChild(state); 
+                    Console.WriteLine($"[AddState] Added {state.Name} as child of {parentState.Name}");
+                }
+            }
 
             Console.WriteLine($"[AddState] Added {type} state: Id='{id}', Name='{description}', Parent='{parent}'");
             return state;

@@ -13,9 +13,23 @@ namespace DPAT1.Strategies
     {
         public bool IsValid(FSM fsm)
         {
+            bool hasInitialState = fsm.Children.Any(state => state.Type == StateType.INITIAL);
+
+            if (!hasInitialState)
+            {
+                var unreachableStates = fsm.Children
+                    .Where(state => state.Type != StateType.INITIAL && !IsStateReachable(state, fsm))
+                    .ToList();
+
+                if (unreachableStates.Count == 1 && unreachableStates[0].Type == StateType.SIMPLE)
+                    return true;
+
+                return unreachableStates.Count == 0;
+            }
+
             return fsm.Children
                 .Where(state => state.Type != StateType.INITIAL)
-                .All(state => IsStateReachable(state, fsm);
+                .All(state => IsStateReachable(state, fsm));
         }
 
         private bool IsStateReachable(IState state, FSM fsm)
@@ -23,10 +37,10 @@ namespace DPAT1.Strategies
             if (fsm.Transitions.Any(t => t.GetTarget() == state))
                 return true;
 
-            if(state.Type == StateType.COMPOUND)
+            if (state.Type == StateType.COMPOUND)
             {
                 var compoundState = (CompoundState)state;
-                return compoundState.GetChildren().Any(child =>  IsStateReachable(child, fsm));
+                return compoundState.GetChildren().Any(child => IsStateReachable(child, fsm));
             }
 
             return false;

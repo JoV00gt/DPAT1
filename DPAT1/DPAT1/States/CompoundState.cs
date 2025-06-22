@@ -17,6 +17,11 @@ namespace DPAT1.States
             Transitions.Add(transition);
         }
 
+        public void AddChild(IState child)
+        {
+            Children.Add(child);
+        }
+
         public List<IState> GetChildren()
         {
             return Children;

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="PrefabFiles\" />
+    <Folder Include="FSMFiles\" />
   </ItemGroup>
 
 </Project>
