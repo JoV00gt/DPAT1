@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using DPAT1.Interfaces;
 
 namespace DPAT1.View
 {
     public class PrintVisitor : IVisitor
     {
-        private int _zero = 0;
+        private const int ZERO = 0;
         public void Visit(ConsoleRenderer consoleRenderer)
         {
-            FSM fsm = consoleRenderer.Fsm;
+            FSM fsm = consoleRenderer.FSM;
 
             Console.WriteLine("=== Finite State Machine ===\n");
 
@@ -27,7 +26,7 @@ namespace DPAT1.View
 
         private void StateRenderer(FSM fsm)
         {
-            if (fsm.Children.Count == _zero)
+            if (fsm.Children.Count == ZERO)
             {
                 Console.WriteLine("  (none)");
             }
@@ -38,7 +37,7 @@ namespace DPAT1.View
                     Console.WriteLine($"  • {state.Name} (Id: {state.Id}, Type: {state.Type})");
 
                     var transitions = state.GetTransitions();
-                    if (transitions.Count == 0)
+                    if (transitions.Count == ZERO)
                     {
                         Console.WriteLine("     └─ No outgoing transitions");
                     }
@@ -60,7 +59,7 @@ namespace DPAT1.View
 
         private void TransitionRenderer(FSM fsm)
         {
-            if (fsm.Transitions.Count > _zero)
+            if (fsm.Transitions.Count > ZERO)
             {
                 Console.WriteLine("\nGlobal Transitions:");
                 foreach (var t in fsm.Transitions)
@@ -75,7 +74,7 @@ namespace DPAT1.View
         private void PrintCollection<T>(string title, List<T> items, Func<T, string> formatter)
         {
             Console.WriteLine($"{title}:");
-            if (items.Count == _zero)
+            if (items.Count == ZERO)
             {
                 Console.WriteLine("  (none)");
             }

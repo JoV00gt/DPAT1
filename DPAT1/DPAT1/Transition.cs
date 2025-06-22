@@ -30,15 +30,6 @@ namespace DPAT1
 
         public IState GetSource() { return Source; }
         public IState GetTarget() { return Target; }
-        public Trigger GetTrigger()
-        {
-            return Trigger;
-        }
-
-        public Action GetEffect()
-        {
-            return Effect;
-        }
 
     }
 }

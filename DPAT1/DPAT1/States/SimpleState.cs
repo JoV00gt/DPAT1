@@ -27,11 +27,6 @@ namespace DPAT1.States
             return Transitions;
         }
 
-        public List<Action> GetActions()
-        {
-            return Actions;
-        }
-
         public void AddAction(Action action)
         {
             Actions.Add(action);
