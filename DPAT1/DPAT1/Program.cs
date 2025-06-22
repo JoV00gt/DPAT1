@@ -28,7 +28,7 @@ class Program
 
         FSMBuilder builder = new FSMBuilder();
         Director director = new Director(builder);
-        director.CreateFSM(filePath, builder.GetFSM());
+        director.BuildFSMFromFile(filePath, builder.GetFSM());
         return builder.GetFSM();
     }
     private static void Validation(FSM fsm)

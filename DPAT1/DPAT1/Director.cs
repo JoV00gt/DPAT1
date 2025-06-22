@@ -13,7 +13,7 @@ namespace DPAT1
             this.builder = builder;
         }
 
-        public FSM CreateFSM(string file, FSM fsm)
+        public FSM BuildFSMFromFile(string file, FSM fsm)
         {
             var stateDict = new Dictionary<string, IState>();
             var triggerDict = new Dictionary<string, Trigger>();
