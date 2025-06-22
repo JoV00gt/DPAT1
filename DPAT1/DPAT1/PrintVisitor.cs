@@ -6,6 +6,7 @@ namespace DPAT1
 {
     public class PrintVisitor : IVisitor
     {
+        private int _zero = 0;
         public void Visit(ConsoleRenderer consoleRenderer)
         {
             FSM fsm = consoleRenderer.Fsm;
@@ -26,7 +27,7 @@ namespace DPAT1
 
         private void StateRenderer(FSM fsm)
         {
-            if (fsm.Children.Count == 0)
+            if (fsm.Children.Count == _zero)
             {
                 Console.WriteLine("  (none)");
             }
@@ -59,7 +60,7 @@ namespace DPAT1
 
         private void TransitionRenderer(FSM fsm)
         {
-            if (fsm.Transitions.Count > 0)
+            if (fsm.Transitions.Count > _zero)
             {
                 Console.WriteLine("\nGlobal Transitions:");
                 foreach (var t in fsm.Transitions)
@@ -74,7 +75,7 @@ namespace DPAT1
         private void PrintCollection<T>(string title, List<T> items, Func<T, string> formatter)
         {
             Console.WriteLine($"{title}:");
-            if (items.Count == 0)
+            if (items.Count == _zero)
             {
                 Console.WriteLine("  (none)");
             }
