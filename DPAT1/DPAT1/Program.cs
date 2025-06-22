@@ -2,10 +2,6 @@
 using DPAT1;
 using DPAT1.Interfaces;
 using DPAT1.Strategies;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
 
 class Program
 {
@@ -14,7 +10,7 @@ class Program
 
     static void Main()
     {
-        string filePath = @"../../../FSMFiles/example_lamp.fsm";
+        string filePath = @"../../../FSMFiles/example_user_account.fsm";
         var validators = new List<(IFSMValidator, string name)>
         {
             (new NonDeterministicTransitionsValidator(), "Non-deterministic transitions"),
@@ -36,8 +32,8 @@ class Program
         ValidateFSM(fsm, validators);
         IUIFactory factory = new ConsoleIOFactory(fsm);
         IOutputRenderer renderer = factory.CreateRenderer();
-        renderer.Accept(visitor);
         IVisitor visitor = factory.CreateVisitor();
+        renderer.Accept(visitor);
     }
 
     private static void ValidateFSM(FSM fsm, List<(IFSMValidator, string name)> validators)

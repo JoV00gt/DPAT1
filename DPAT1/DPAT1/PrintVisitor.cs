@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DPAT1.Interfaces;
 
 namespace DPAT1
@@ -15,51 +12,41 @@ namespace DPAT1
 
             Console.WriteLine("=== Finite State Machine ===\n");
 
-            // Section: Actions
-            var actions = GetPrivateActions(fsm);
-            Console.WriteLine("Actions:");
-            if (actions.Count == 0)
-                Console.WriteLine("  (none)");
-            foreach (var action in actions)
-                Console.WriteLine($"  - {action.Id}");
-            Console.WriteLine();
+            PrintCollection("Actions", fsm.GetActions(), a => $"- {a.Id}");
 
-            // Section: Triggers
-            var triggers = GetPrivateTriggers(fsm);
-            Console.WriteLine("Triggers:");
-            if (triggers.Count == 0)
-                Console.WriteLine("  (none)");
-            foreach (var trigger in triggers)
-                Console.WriteLine($"  - {trigger.Id}");
-            Console.WriteLine();
+            PrintCollection("Triggers", fsm.GetTriggers(), t => $"- {t.Id}");
 
-            // Section: States and transitions
             Console.WriteLine("States:");
             if (fsm.Children.Count == 0)
-                Console.WriteLine("  (none)");
-
-            foreach (var state in fsm.Children)
             {
-                Console.WriteLine($"  • {state.Name} (Id: {state.Id}, Type: {state.Type})");
+                Console.WriteLine("  (none)");
+            }
+            else
+            {
+                foreach (var state in fsm.Children)
+                {
+                    Console.WriteLine($"  • {state.Name} (Id: {state.Id}, Type: {state.Type})");
 
-                var transitions = state.GetTransitions();
-                if (transitions.Count == 0)
-                {
-                    Console.WriteLine("     └─ No outgoing transitions");
-                }
-                else
-                {
-                    Console.WriteLine("     └─ Outgoing transitions:");
-                    foreach (var transition in transitions)
+                    var transitions = state.GetTransitions();
+                    if (transitions.Count == 0)
                     {
-                        string triggerId = transition.Trigger?.Id ?? "guard"; // ε = silent/no trigger
-                        string guardText = !string.IsNullOrWhiteSpace(transition.Guard) ? $" [guard: {transition.Guard}]" : "";
-                        Console.WriteLine($"        --> {transition.Target.Id} on trigger '{triggerId}'{guardText}");
+                        Console.WriteLine("     └─ No outgoing transitions");
+                    }
+                    else
+                    {
+                        Console.WriteLine("     └─ Outgoing transitions:");
+                        foreach (var transition in transitions)
+                        {
+                            string triggerId = transition.Trigger?.Id ?? "guard";
+                            string guardText = !string.IsNullOrWhiteSpace(transition.Guard)
+                                ? $" [guard: {transition.Guard}]"
+                                : "";
+                            Console.WriteLine($"        --> {transition.Target.Id} on trigger '{triggerId}'{guardText}");
+                        }
                     }
                 }
             }
 
-            // Section: Global Transitions (if any)
             if (fsm.Transitions.Count > 0)
             {
                 Console.WriteLine("\nGlobal Transitions:");
@@ -74,16 +61,21 @@ namespace DPAT1
             Console.WriteLine("\n=== End of FSM ===");
         }
 
-        private List<Action> GetPrivateActions(FSM fsm)
+        private void PrintCollection<T>(string title, List<T> items, Func<T, string> formatter)
         {
-            var field = typeof(FSM).GetField("actions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            return field?.GetValue(fsm) as List<Action> ?? new();
-        }
-
-        private List<Trigger> GetPrivateTriggers(FSM fsm)
-        {
-            var field = typeof(FSM).GetField("triggers", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            return field?.GetValue(fsm) as List<Trigger> ?? new();
+            Console.WriteLine($"{title}:");
+            if (items.Count == 0)
+            {
+                Console.WriteLine("  (none)");
+            }
+            else
+            {
+                foreach (var item in items)
+                {
+                    Console.WriteLine($"  {formatter(item)}");
+                }
+            }
+            Console.WriteLine();
         }
     }
 }

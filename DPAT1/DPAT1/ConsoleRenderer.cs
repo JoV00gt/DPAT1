@@ -18,7 +18,7 @@ namespace DPAT1
 
         public void Accept(IVisitor visitor)
         {
-            visitor.Visit(this); // Accepts a visitor that knows how to render ConsoleRenderer
+            visitor.Visit(this);
         }
     }
 }
