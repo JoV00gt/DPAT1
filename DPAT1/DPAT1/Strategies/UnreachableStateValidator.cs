@@ -16,20 +16,39 @@ namespace DPAT1.Strategies
             bool hasInitialState = fsm.Children.Any(state => state.Type == StateType.INITIAL);
 
             if (!hasInitialState)
-            {
-                var unreachableStates = fsm.Children
-                    .Where(state => state.Type != StateType.INITIAL && !IsStateReachable(state, fsm))
-                    .ToList();
+                return ValidateFSMWithoutInitialState(fsm);
 
-                if (unreachableStates.Count == 1 && unreachableStates[0].Type == StateType.SIMPLE)
-                    return true;
+            return ValidateFSMWithInitialState(fsm);
+        }
 
-                return unreachableStates.Count == 0;
-            }
+        private bool ValidateFSMWithoutInitialState(FSM fsm)
+        {
+            var unreachableStates = GetUnreachableStates(fsm);
 
+            if (IsValidImplicitInitialState(unreachableStates))
+                return true;
+
+            return unreachableStates.Count == FSMValidationRules.NO_UNREACHABLE_STATES;
+        }
+
+        private bool ValidateFSMWithInitialState(FSM fsm)
+        {
             return fsm.Children
                 .Where(state => state.Type != StateType.INITIAL)
                 .All(state => IsStateReachable(state, fsm));
+        }
+
+        private List<IState> GetUnreachableStates(FSM fsm)
+        {
+            return fsm.Children
+                .Where(state => state.Type != StateType.INITIAL && !IsStateReachable(state, fsm))
+                .ToList();
+        }
+
+        private bool IsValidImplicitInitialState(List<IState> unreachableStates)
+        {
+            return unreachableStates.Count == FSMValidationRules.SINGLE_UNREACHABLE_STATE &&
+                   unreachableStates[FSMValidationRules.FIRST_ELEMENT_INDEX].Type == StateType.SIMPLE;
         }
 
         private bool IsStateReachable(IState state, FSM fsm)
@@ -38,12 +57,15 @@ namespace DPAT1.Strategies
                 return true;
 
             if (state.Type == StateType.COMPOUND)
-            {
-                var compoundState = (CompoundState)state;
-                return compoundState.GetChildren().Any(child => IsStateReachable(child, fsm));
-            }
+                return IsCompoundStateReachable(state, fsm);
 
             return false;
+        }
+
+        private bool IsCompoundStateReachable(IState state, FSM fsm)
+        {
+            var compoundState = (CompoundState)state;
+            return compoundState.GetChildren().Any(child => IsStateReachable(child, fsm));
         }
     }
 }

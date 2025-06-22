@@ -12,45 +12,56 @@ namespace DPAT1.Strategies
     {
         public bool IsValid(FSM fsm)
         {
-            foreach (IState state in fsm.Children) 
+            foreach (IState state in fsm.Children)
             {
-                List<Transition> outgoingTransitions = GetOutgoingTransition(state, fsm);
+                List<Transition> outgoingTransitions = GetOutgoingTransitions(state, fsm);
 
-                if (!AreTransitionsDeterministic(outgoingTransitions))
+                if (!HasValidAutomaticTransitions(outgoingTransitions))
+                    return false;
+
+                if (!HasValidTriggeredTransitions(outgoingTransitions))
                     return false;
             }
             return true;
         }
 
-        private bool AreTransitionsDeterministic(List<Transition> transitions)
+        private bool HasValidAutomaticTransitions(List<Transition> transitions)
         {
             var automaticTransitions = transitions.Where(t => t.Trigger == null).ToList();
 
-            if (automaticTransitions.Count > 1)
+            if (automaticTransitions.Count > FSMValidationRules.MAX_AUTOMATIC_TRANSITIONS_PER_STATE)
                 return false;
 
-            if(automaticTransitions.Count > 0 && transitions.Count > 1)
+            if (automaticTransitions.Count > FSMValidationRules.NO_UNREACHABLE_STATES &&
+                transitions.Count > FSMValidationRules.MAX_AUTOMATIC_TRANSITIONS_PER_STATE)
                 return false;
 
+            return true;
+        }
+
+        private bool HasValidTriggeredTransitions(List<Transition> transitions)
+        {
             var triggeredTransitions = transitions.Where(t => t.Trigger != null);
             var triggerGroups = triggeredTransitions.GroupBy(t => t.Trigger);
 
             foreach (var triggerGroup in triggerGroups)
             {
-                if(triggerGroup.Count() > 1)
-                {
-                    var transitionsWithSameTrigger = triggerGroup.ToList();
-
-                    if (transitionsWithSameTrigger.Any(t => t.Guard == null))
-                        return false;
-
-
-                    if (!HaveUniqueGuards(transitionsWithSameTrigger))
-                        return false;
-                }
+                if (!IsValidTriggerGroup(triggerGroup.ToList()))
+                    return false;
             }
 
             return true;
+        }
+
+        private bool IsValidTriggerGroup(List<Transition> transitionsWithSameTrigger)
+        {
+            if (transitionsWithSameTrigger.Count <= FSMValidationRules.MAX_AUTOMATIC_TRANSITIONS_PER_STATE)
+                return true;
+
+            if (transitionsWithSameTrigger.Any(t => t.Guard == null))
+                return false;
+
+            return HaveUniqueGuards(transitionsWithSameTrigger);
         }
 
         private bool HaveUniqueGuards(List<Transition> transitions)
@@ -62,7 +73,7 @@ namespace DPAT1.Strategies
             return guardConditions.Distinct().Count() == guardConditions.Count();
         }
 
-        private List<Transition> GetOutgoingTransition(IState state, FSM fsm)
+        private List<Transition> GetOutgoingTransitions(IState state, FSM fsm)
         {
             return fsm.Transitions
                 .Where(t => t.Source == state)

@@ -14,7 +14,7 @@ class Program
 
     static void Main()
     {
-        string filePath = @"../../../FSMFiles/example_lamp.fsm";
+        string filePath = @"../../../FSMFiles/example_user_account.fsm";
         var validators = new List<(IFSMValidator, string name)>
         {
             (new NonDeterministicTransitionsValidator(), "Non-deterministic transitions"),
