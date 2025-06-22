@@ -52,7 +52,9 @@ namespace DPAT1
                     Console.WriteLine("     └─ Outgoing transitions:");
                     foreach (var transition in transitions)
                     {
-                        Console.WriteLine($"        --> {transition.Target.Id} on trigger '{transition.Trigger.Id}'");
+                        string triggerId = transition.Trigger?.Id ?? "guard"; // ε = silent/no trigger
+                        string guardText = !string.IsNullOrWhiteSpace(transition.Guard) ? $" [guard: {transition.Guard}]" : "";
+                        Console.WriteLine($"        --> {transition.Target.Id} on trigger '{triggerId}'{guardText}");
                     }
                 }
             }
@@ -63,7 +65,9 @@ namespace DPAT1
                 Console.WriteLine("\nGlobal Transitions:");
                 foreach (var t in fsm.Transitions)
                 {
-                    Console.WriteLine($"  - {t.Source.Id} --> {t.Target.Id} on '{t.Trigger.Id}'");
+                    string triggerText = t.Trigger != null ? $"'{t.Trigger.Id}'" : "guard";
+                    string guardText = !string.IsNullOrWhiteSpace(t.Guard) ? $" [guard: {t.Guard}]" : "";
+                    Console.WriteLine($"  - {t.Source.Id} --> {t.Target.Id} on {triggerText}{guardText}");
                 }
             }
 

@@ -33,17 +33,7 @@ namespace DPAT1
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
                     continue;
 
-                if (line.StartsWith("STATE"))
-                {
-                    var state = ParseStateDefinition(line);
-                    if (state != null)
-                    {
-                        fsm.AddState(state);
-                        stateDict[state.Id] = state;
-                        Console.WriteLine($"Parsed STATE: {state.Id}");
-                    }
-                }
-                else if (line.StartsWith("TRIGGER"))
+                if (line.StartsWith("TRIGGER"))
                 {
                     var trigger = ParseTriggerDefinition(line);
                     if (trigger != null)
@@ -51,6 +41,16 @@ namespace DPAT1
                         fsm.AddTrigger(trigger);
                         triggerDict[trigger.Id] = trigger;
                         Console.WriteLine($"Parsed TRIGGER: {trigger.Id}");
+                    }
+                }
+                else if (line.StartsWith("STATE"))
+                {
+                    var state = ParseStateDefinition(line);
+                    if (state != null)
+                    {
+                        fsm.AddState(state);
+                        stateDict[state.Id] = state;
+                        Console.WriteLine($"Parsed STATE: {state.Id}");
                     }
                 }
                 else if (line.StartsWith("ACTION"))
@@ -101,19 +101,28 @@ namespace DPAT1
 
         private Transition? ParseTransitionDefinition(string trimmedLine)
         {
-            // Format: TRANSITION <name> <from> -> <to> [<trigger>] ["<condition>"];
-            // Both trigger and condition are optional
-            var match = Regex.Match(trimmedLine, @"^TRANSITION\s+(\S+)\s+(\S+)\s*->\s*(\S+)(?:\s+(\S+))?(?:\s+""([^""]*)"")?\s*;?\s*$");
+            var match = Regex.Match(trimmedLine, @"^TRANSITION\s+(\S+)\s+(\S+)\s*->\s*(\S+)(?:\s+(\S+))?\s*(?:""([^""]*)"")?\s*;?\s*$");
 
             if (match.Success)
             {
-                string name = match.Groups[1].Value;
+                string id = match.Groups[1].Value;
                 string from = match.Groups[2].Value;
                 string to = match.Groups[3].Value;
-                string trigger = match.Groups[4].Success ? match.Groups[4].Value : null; // Can be null
-                string condition = match.Groups[5].Success ? match.Groups[5].Value : null; // Can be null
+                string trigger = null;
+                string guard = null;
 
-                return builder.AddTransition(name, from, to, trigger, condition);
+                if (match.Groups[5].Success)
+                {
+                    guard = match.Groups[5].Value;
+                    if (match.Groups[4].Success)
+                        trigger = match.Groups[4].Value;
+                }
+                else if (match.Groups[4].Success)
+                {
+                    trigger = match.Groups[4].Value;
+                }
+
+                return builder.AddTransition(id, from, to, trigger, guard);
             }
             else
             {
