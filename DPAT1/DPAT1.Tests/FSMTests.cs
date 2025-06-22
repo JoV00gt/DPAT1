@@ -222,7 +222,7 @@ namespace DPAT1.Tests
             string id = "test_state";
             string parent = "_";
             string description = "Test State";
-            string type = "SIMPLE";
+            StateType type = StateType.SIMPLE;
 
             // Act
             var result = builder.AddState(id, parent, description, type);
