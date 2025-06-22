@@ -36,7 +36,6 @@ namespace DPAT1
                         {
                             fsm.AddTrigger(trigger);
                             triggerDict[trigger.Id] = trigger;
-                            Console.WriteLine($"Parsed TRIGGER: {trigger.Id}");
                         }
                         break;
 
@@ -46,7 +45,6 @@ namespace DPAT1
                         {
                             fsm.AddState(state);
                             stateDict[state.Id] = state;
-                            Console.WriteLine($"Parsed STATE: {state.Id}");
                         }
                         break;
 
@@ -56,7 +54,6 @@ namespace DPAT1
                         {
                             fsm.AddAction(action);
                             actionDict[action.Id] = action;
-                            Console.WriteLine($"Parsed ACTION: {action.Id} ({action.Type})");
                         }
                         break;
 
@@ -66,12 +63,10 @@ namespace DPAT1
                         {
                             fsm.AddTransition(transition);
                             transition.Source.AddTransition(transition);
-                            Console.WriteLine($"Parsed TRANSITION: {transition.Id}");
                         }
                         break;
 
                     default:
-                        Console.WriteLine($"Unrecognized definition: {line}");
                         break;
                 }
             }
@@ -146,7 +141,6 @@ namespace DPAT1
 
                 if (!Enum.TryParse<StateType>(type, true, out var stateType))
                 {
-                    Console.WriteLine($"[ParseStateDefinition] Unknown state type: '{type}'");
                     return null;
                 }
 

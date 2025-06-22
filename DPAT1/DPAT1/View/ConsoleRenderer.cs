@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DPAT1
+namespace DPAT1.View
 {
     public class ConsoleRenderer : IOutputRenderer
     {

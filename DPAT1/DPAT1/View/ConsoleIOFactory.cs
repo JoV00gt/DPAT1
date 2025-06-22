@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DPAT1.Interfaces;
 
-namespace DPAT1
+namespace DPAT1.View
 {
     public class ConsoleIOFactory : IUIFactory
     {

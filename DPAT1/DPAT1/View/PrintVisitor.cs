@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using DPAT1.Interfaces;
 
-namespace DPAT1
+namespace DPAT1.View
 {
     public class PrintVisitor : IVisitor
     {

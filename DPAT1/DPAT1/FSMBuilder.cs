@@ -29,13 +29,11 @@ namespace DPAT1
         {
             if (!Enum.TryParse<ActionType>(actionTypeString, out var actionType))
             {
-                Console.WriteLine($"[AddAction] Unknown action type: '{actionTypeString}'");
                 return null;
             }
 
             if (_actions.ContainsKey(id))
             {
-                Console.WriteLine($"[AddAction] Action with ID '{id}' already exists. Skipping.");
                 return null;
             }
 
@@ -47,9 +45,6 @@ namespace DPAT1
             };
 
             _actions[id] = action;
-
-            Console.WriteLine($"[AddAction] Added action: Id='{id}', Description='{description}', Type='{actionType}'");
-
             return action;
         }
 
@@ -58,7 +53,6 @@ namespace DPAT1
         {
             if (_states.ContainsKey(id))
             {
-                Console.WriteLine($"[AddState] State with ID '{id}' already exists. Skipping.");
                 return null;
             }
 
@@ -99,7 +93,6 @@ namespace DPAT1
 
             if (state == null)
             {
-                Console.WriteLine($"[AddState] Unknown state type: '{type}' for ID '{id}'. Skipping.");
                 return null;
             }
 
@@ -111,11 +104,8 @@ namespace DPAT1
                 if (parentState is CompoundState compoundParent)
                 {
                     compoundParent.AddChild(state); 
-                    Console.WriteLine($"[AddState] Added {state.Name} as child of {parentState.Name}");
                 }
             }
-
-            Console.WriteLine($"[AddState] Added {type} state: Id='{id}', Name='{description}', Parent='{parent}'");
             return state;
         }
 
@@ -123,13 +113,11 @@ namespace DPAT1
         {
             if (!_states.TryGetValue(from, out var source))
             {
-                Console.WriteLine($"[AddTransition] Source state '{from}' not found.");
                 return null;
             }
 
             if (!_states.TryGetValue(to, out var target))
             {
-                Console.WriteLine($"[AddTransition] Target state '{to}' not found.");
                 return null;
             }
 
@@ -145,7 +133,6 @@ namespace DPAT1
                 else
                 {
                     guard = triggerNameOrGuard;
-                    Console.WriteLine($"[AddTransition] Interpreting '{triggerNameOrGuard}' as guard, not trigger.");
                 }
             }
 
@@ -157,8 +144,7 @@ namespace DPAT1
 
             var transition = new Transition(id, source, target, trigger, guard, effect);
             _transitions[id] = transition;
-
-            Console.WriteLine($"[AddTransition] id='{id}', from='{from}', to='{to}', trigger='{trigger?.Id ?? "null"}', guard='{guard ?? "none"}', effect='{effect?.Id ?? "null"}'");
+                
             return transition;
         }
 
@@ -166,7 +152,6 @@ namespace DPAT1
         {
             if (_triggers.ContainsKey(id))
             {
-                Console.WriteLine($"[AddTrigger] Trigger with ID '{id}' already exists. Skipping.");
                 return null;
             }
 
@@ -177,8 +162,6 @@ namespace DPAT1
             };
 
             _triggers[id] = trigger;
-
-            Console.WriteLine($"[AddTrigger] Added trigger: Id='{id}', Description='{description}'");
             return trigger;
         }
 
@@ -193,7 +176,6 @@ namespace DPAT1
                         if (action.Id == state.Id)
                         {
                             simpleState.AddAction(action);
-                            Console.WriteLine($"Connected ACTION '{action.Id}' to STATE '{state.Id}'");
                         }
                     }
                 }

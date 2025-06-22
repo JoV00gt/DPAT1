@@ -1,6 +1,7 @@
 using DPAT1;
 using DPAT1.Interfaces;
 using DPAT1.Strategies;
+using DPAT1.View;
 using System;
 using System.IO;
 
