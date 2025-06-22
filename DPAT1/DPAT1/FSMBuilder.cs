@@ -169,15 +169,9 @@ namespace DPAT1
         {
             foreach (var action in actions.Values)
             {
-                foreach (var state in states.Values)
+                if (states.TryGetValue(action.Id, out var state) && state is SimpleState simpleState)
                 {
-                    if (state is SimpleState simpleState)
-                    {
-                        if (action.Id == state.Id)
-                        {
-                            simpleState.AddAction(action);
-                        }
-                    }
+                    simpleState.AddAction(action);
                 }
             }
         }
