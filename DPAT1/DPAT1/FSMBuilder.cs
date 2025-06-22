@@ -53,10 +53,8 @@ namespace DPAT1
             return action;
         }
 
-        // Optional: public method to retrieve actions
-        public Action GetAction(string id) => _actions.TryGetValue(id, out var action) ? action : null;
 
-        public IState? AddState(string id, string parent, string description, string type)
+        public IState? AddState(string id, string parent, string description, StateType type)
         {
             if (_states.ContainsKey(id))
             {
@@ -66,21 +64,21 @@ namespace DPAT1
 
             IState? state = type switch
             {
-                "INITIAL" => new InitialState
+                StateType.INITIAL => new InitialState
                 {
                     Id = id,
                     Name = description,
                     Type = StateType.INITIAL,
                     Transitions = new List<Transition>()
                 },
-                "FINAL" => new FinalState
+                StateType.FINAL => new FinalState
                 {
                     Id = id,
                     Name = description,
                     Type = StateType.FINAL,
                     Transitions = new List<Transition>()
                 },
-                "SIMPLE" => new SimpleState
+                StateType.SIMPLE => new SimpleState
                 {
                     Id = id,
                     Name = description,
@@ -88,7 +86,7 @@ namespace DPAT1
                     Transitions = new List<Transition>(),
                     Actions = new List<Action>()
                 },
-                "COMPOUND" => new CompoundState
+                StateType.COMPOUND => new CompoundState
                 {
                     Id = id,
                     Name = description,
@@ -121,7 +119,7 @@ namespace DPAT1
             return state;
         }
 
-        public Transition? AddTransition(string id, string from, string to, string triggerName, string guard)
+        public Transition? AddTransition(string id, string from, string to, string? triggerNameOrGuard, string? guardFromParser)
         {
             if (!_states.TryGetValue(from, out var source))
             {
@@ -135,25 +133,32 @@ namespace DPAT1
                 return null;
             }
 
-            Trigger trigger = null;
-            if (!string.IsNullOrWhiteSpace(triggerName))
+            Trigger? trigger = null;
+            string? guard = guardFromParser;
+
+            if (!string.IsNullOrWhiteSpace(triggerNameOrGuard))
             {
-                _triggers.TryGetValue(triggerName, out trigger);
-                if (trigger == null)
-                    Console.WriteLine($"[AddTransition] Warning: Trigger '{triggerName}' not found.");
+                if (_triggers.TryGetValue(triggerNameOrGuard, out var foundTrigger))
+                {
+                    trigger = foundTrigger;
+                }
+                else
+                {
+                    guard = triggerNameOrGuard;
+                    Console.WriteLine($"[AddTransition] Interpreting '{triggerNameOrGuard}' as guard, not trigger.");
+                }
             }
 
-            Action effect = null;
+            Action? effect = null;
             if (_actions.TryGetValue(id, out var action))
             {
                 effect = action;
             }
 
             var transition = new Transition(id, source, target, trigger, guard, effect);
-
             _transitions[id] = transition;
 
-            Console.WriteLine($"[AddTransition] id='{id}', from='{from}', to='{to}', trigger='{triggerName}', guard='{guard}', effect='{effect?.Id ?? "null"}'");
+            Console.WriteLine($"[AddTransition] id='{id}', from='{from}', to='{to}', trigger='{trigger?.Id ?? "null"}', guard='{guard ?? "none"}', effect='{effect?.Id ?? "null"}'");
             return transition;
         }
 

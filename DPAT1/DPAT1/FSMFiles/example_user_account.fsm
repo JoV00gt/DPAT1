@@ -62,6 +62,6 @@ TRANSITION t7 verified -> blocked "attempts >= 3";
 TRANSITION t8 active -> blocked blocked_by_admin "";
 TRANSITION t9 blocked -> verified unblocked_by_admin "";
 TRANSITION t10 blocked -> deleted deleted_by_admin "";
-TRANSITION t11 deleted -> final archive "";
+TRANSITION t11 deleted -> final archive "";	
 TRANSITION t12 unverified -> deleted timer_elapsed "";
 

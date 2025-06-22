@@ -1,10 +1,6 @@
-﻿using DPAT1.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using DPAT1.Enums;
+using DPAT1.Interfaces;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace DPAT1
 {
@@ -22,7 +18,6 @@ namespace DPAT1
             var stateDict = new Dictionary<string, IState>();
             var triggerDict = new Dictionary<string, Trigger>();
             var actionDict = new Dictionary<string, Action>();
-            var transitionList = new List<Transition>();
 
             string[] lines = File.ReadAllLines(file);
 
@@ -33,46 +28,51 @@ namespace DPAT1
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
                     continue;
 
-                if (line.StartsWith("STATE"))
+                switch (GetDefinitionType(line))
                 {
-                    var state = ParseStateDefinition(line);
-                    if (state != null)
-                    {
-                        fsm.AddState(state);
-                        stateDict[state.Id] = state;
-                        Console.WriteLine($"Parsed STATE: {state.Id}");
-                    }
-                }
-                else if (line.StartsWith("TRIGGER"))
-                {
-                    var trigger = ParseTriggerDefinition(line);
-                    if (trigger != null)
-                    {
-                        fsm.AddTrigger(trigger);
-                        triggerDict[trigger.Id] = trigger;
-                        Console.WriteLine($"Parsed TRIGGER: {trigger.Id}");
-                    }
-                }
-                else if (line.StartsWith("ACTION"))
-                {
-                    var action = ParseActionDefinition(line);
-                    if (action != null)
-                    {
-                        fsm.AddAction(action);
-                        actionDict[action.Id] = action;
-                        Console.WriteLine($"Parsed ACTION: {action.Id} ({action.Type})");
-                    }
-                }
-                else if (line.StartsWith("TRANSITION"))
-                {
-                    var transition = ParseTransitionDefinition(line);
-                    if (transition != null)
-                    {
-                        fsm.AddTransition(transition);
-                        transition.Source.AddTransition(transition);
-                        transitionList.Add(transition);
-                        Console.WriteLine($"Parsed TRANSITION: {transition.Id}");
-                    }
+                    case DefinitionType.Trigger:
+                        var trigger = ParseTriggerDefinition(line);
+                        if (trigger != null)
+                        {
+                            fsm.AddTrigger(trigger);
+                            triggerDict[trigger.Id] = trigger;
+                            Console.WriteLine($"Parsed TRIGGER: {trigger.Id}");
+                        }
+                        break;
+
+                    case DefinitionType.State:
+                        var state = ParseStateDefinition(line);
+                        if (state != null)
+                        {
+                            fsm.AddState(state);
+                            stateDict[state.Id] = state;
+                            Console.WriteLine($"Parsed STATE: {state.Id}");
+                        }
+                        break;
+
+                    case DefinitionType.Action:
+                        var action = ParseActionDefinition(line);
+                        if (action != null)
+                        {
+                            fsm.AddAction(action);
+                            actionDict[action.Id] = action;
+                            Console.WriteLine($"Parsed ACTION: {action.Id} ({action.Type})");
+                        }
+                        break;
+
+                    case DefinitionType.Transition:
+                        var transition = ParseTransitionDefinition(line);
+                        if (transition != null)
+                        {
+                            fsm.AddTransition(transition);
+                            transition.Source.AddTransition(transition);
+                            Console.WriteLine($"Parsed TRANSITION: {transition.Id}");
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine($"Unrecognized definition: {line}");
+                        break;
                 }
             }
 
@@ -80,86 +80,79 @@ namespace DPAT1
             return fsm;
         }
 
+        private static DefinitionType GetDefinitionType(string line)
+        {
+            if (line.StartsWith("TRIGGER", StringComparison.OrdinalIgnoreCase)) return DefinitionType.Trigger;
+            if (line.StartsWith("STATE", StringComparison.OrdinalIgnoreCase)) return DefinitionType.State;
+            if (line.StartsWith("ACTION", StringComparison.OrdinalIgnoreCase)) return DefinitionType.Action;
+            if (line.StartsWith("TRANSITION", StringComparison.OrdinalIgnoreCase)) return DefinitionType.Transition;
+            return DefinitionType.Unknown;
+        }
+
         private Trigger? ParseTriggerDefinition(string trimmedLine)
         {
-            // Format: TRIGGER <name> "<description>";
-            var match = Regex.Match(trimmedLine, @"^TRIGGER\s+(\S+)\s+""([^""]+)"";?$");
+            var match = RegexPatterns.Trigger.Match(trimmedLine);
 
             if (match.Success)
             {
-                string name = match.Groups[1].Value;
-                string description = match.Groups[2].Value;
-
+                string name = match.Groups["name"].Value;
+                string description = match.Groups["desc"].Value;
                 return builder.AddTrigger(name, description);
             }
-            else
-            {
-                Console.WriteLine($"Could not parse trigger line: {trimmedLine}");
-                return null;
-            }
+            return null;
         }
 
         private Transition? ParseTransitionDefinition(string trimmedLine)
         {
-            // Format: TRANSITION <name> <from> -> <to> [<trigger>] ["<condition>"];
-            // Both trigger and condition are optional
-            var match = Regex.Match(trimmedLine, @"^TRANSITION\s+(\S+)\s+(\S+)\s*->\s*(\S+)(?:\s+(\S+))?(?:\s+""([^""]*)"")?\s*;?\s*$");
+            var match = RegexPatterns.Transition.Match(trimmedLine);
 
             if (match.Success)
             {
-                string name = match.Groups[1].Value;
-                string from = match.Groups[2].Value;
-                string to = match.Groups[3].Value;
-                string trigger = match.Groups[4].Success ? match.Groups[4].Value : null; // Can be null
-                string condition = match.Groups[5].Success ? match.Groups[5].Value : null; // Can be null
+                string id = match.Groups["id"].Value;
+                string from = match.Groups["from"].Value;
+                string to = match.Groups["to"].Value;
+                string? trigger = match.Groups["trigger"].Success ? match.Groups["trigger"].Value : null;
+                string? guard = match.Groups["guard"].Success ? match.Groups["guard"].Value : null;
 
-                return builder.AddTransition(name, from, to, trigger, condition);
+                return builder.AddTransition(id, from, to, trigger, guard);
             }
-            else
-            {
-                Console.WriteLine($"Could not parse transition line: {trimmedLine}");
-                return null;
-            }
+            return null;
         }
         private Action? ParseActionDefinition(string trimmedLine)
         {
-            // Format: ACTION <name> "<description>" : <action_type>;
-            var match = Regex.Match(trimmedLine, @"^ACTION\s+(\S+)\s+""([^""]+)""\s*:\s*(\w+);?$");
+            var match = RegexPatterns.Action.Match(trimmedLine);
 
             if (match.Success)
             {
-                string name = match.Groups[1].Value;
-                string description = match.Groups[2].Value;
-                string actionType = match.Groups[3].Value;
+                string name = match.Groups["name"].Value;
+                string description = match.Groups["desc"].Value;
+                string actionType = match.Groups["type"].Value;
 
                 return builder.AddAction(name, description, actionType);
             }
-            else
-            {
-                Console.WriteLine($"Could not parse action line: {trimmedLine}");
-                return null;
-            }
+            return null;
         }
 
         private IState? ParseStateDefinition(string trimmedLine)
         {
-            // Format: STATE <name> <parent> "<description>" : <type>;
-            var match = Regex.Match(trimmedLine, @"^STATE\s+(\S+)\s+(\S+)\s+""([^""]*)""\s*:\s*(\w+)\s*;?\s*$");
+            var match = RegexPatterns.State.Match(trimmedLine);
 
             if (match.Success)
             {
-                string name = match.Groups[1].Value;
-                string parent = match.Groups[2].Value;
-                string description = match.Groups[3].Value;
-                string stateType = match.Groups[4].Value;
+                string name = match.Groups["name"].Value;
+                string parent = match.Groups["parent"].Value;
+                string description = match.Groups["desc"].Value;
+                string type = match.Groups["type"].Value;
+
+                if (!Enum.TryParse<StateType>(type, true, out var stateType))
+                {
+                    Console.WriteLine($"[ParseStateDefinition] Unknown state type: '{type}'");
+                    return null;
+                }
 
                 return builder.AddState(name, parent, description, stateType);
             }
-            else
-            {
-                Console.WriteLine($"Could not parse state line: {trimmedLine}");
-                return null;
-            }
+            return null;
         }
 
     }

@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-using DPAT1.Interfaces;
-using Action = DPAT1.Action;
+﻿using DPAT1.Interfaces;
 
 namespace DPAT1
 {
@@ -39,24 +37,7 @@ namespace DPAT1
             triggers.Add(trigger);
         }
 
-        public Action GetActionById(string id)
-        {
-            return actions.Find(a => a.Id == id);
-        }
-
-        public IState GetStateById(string id)
-        {
-           return Children.Find(s => s.Id == id);
-        }
-
-        public Trigger GetTriggerById(string id)
-        {
-            return triggers.Find(t => t.Id == id);
-        }
-
-        public void Accept(Visitor visitor)
-        {
-            //TODO: implementation of the visitor pattern
-        }
+        public List<Action> GetActions() => actions;
+        public List<Trigger> GetTriggers() => triggers;
     }
 }
