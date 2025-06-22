@@ -1,10 +1,5 @@
-﻿using DPAT1.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using DPAT1.Helpers;
+using DPAT1.Interfaces;
 
 namespace DPAT1.Strategies
 {
